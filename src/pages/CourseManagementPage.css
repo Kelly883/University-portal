@@ -1,0 +1,21 @@
+.course-management-page .courses-section {
+  margin-bottom: 30px;
+}
+
+.course-management-page ul {
+  list-style: none;
+  padding: 0;
+}
+
+.course-management-page li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.credit-unit-summary {
+    margin-top: 20px;
+    font-weight: bold;
+}
