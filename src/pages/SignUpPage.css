@@ -1,0 +1,26 @@
+.signup-page {
+  padding: 20px;
+}
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 500px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group select {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}

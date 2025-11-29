@@ -1,0 +1,16 @@
+.document-repository-page .file-upload {
+  margin-bottom: 30px;
+}
+
+.document-repository-page table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.document-repository-page th,
+.document-repository-page td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: left;
+}

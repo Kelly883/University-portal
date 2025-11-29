@@ -1,0 +1,33 @@
+.payment-portal-page .payment-form {
+  margin-bottom: 30px;
+}
+
+.payment-portal-page .form-group {
+  margin-bottom: 15px;
+}
+
+.payment-portal-page label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.payment-portal-page input,
+.payment-portal-page select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.payment-portal-page table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.payment-portal-page th,
+.payment-portal-page td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: left;
+}

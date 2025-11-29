@@ -1,0 +1,27 @@
+.header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #f4f4f4;
+  border-bottom: 1px solid #ddd;
+}
+
+.search-bar {
+  display: flex;
+}
+
+.search-bar input {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px 0 0 4px;
+}
+
+.search-bar button {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  border-left: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+}
