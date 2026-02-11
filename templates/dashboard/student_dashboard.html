@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <h1>Student Dashboard</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-header">Enrolled Courses</div>
+            <div class="card-body">
+                <h5 class="card-title">{{ user.enrollments.count }}</h5>
+                <a href="{% url 'my_courses' %}" class="btn btn-light btn-sm">View Courses</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-header">Attendance</div>
+            <div class="card-body">
+                <h5 class="card-title">View Stats</h5>
+                <a href="#" class="btn btn-light btn-sm">Check Attendance</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-info mb-3">
+            <div class="card-header">Results</div>
+            <div class="card-body">
+                <h5 class="card-title">Latest Grades</h5>
+                <a href="#" class="btn btn-light btn-sm">View Results</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">Recent Notifications</div>
+            <ul class="list-group list-group-flush">
+                {% for notif in user.notifications.all|slice:":5" %}
+                    <li class="list-group-item">
+                        <strong>{{ notif.title }}</strong> - {{ notif.created_at|date:"M d, Y" }}
+                        <p class="mb-0 text-muted">{{ notif.message|truncatewords:20 }}</p>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">No recent notifications.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

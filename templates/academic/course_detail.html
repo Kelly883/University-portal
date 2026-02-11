@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ course.code }} - {{ course.name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-3">{{ course.code }} - {{ course.name }}</h1>
+        <p class="lead">{{ course.description }}</p>
+        <hr>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <h3>Course Materials</h3>
+        <ul class="list-group mb-4">
+            {% for material in course.materials.all %}
+                <li class="list-group-item">
+                    <a href="{{ material.file.url }}" target="_blank">{{ material.title }}</a>
+                    <span class="text-muted float-end">{{ material.uploaded_at|date:"M d, Y" }}</span>
+                </li>
+            {% empty %}
+                <li class="list-group-item">No materials uploaded yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">Course Info</div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><strong>Department:</strong> {{ course.department.name }}</li>
+                <li class="list-group-item"><strong>Faculty:</strong> {{ course.faculty.username }}</li>
+                <li class="list-group-item"><strong>Credits:</strong> {{ course.credits }}</li>
+            </ul>
+        </div>
+
+        {% if user.is_student %}
+            <div class="card">
+                <div class="card-body">
+                    {% if user in course.enrollments.all %} <!-- This check needs improvement in view logic usually, but simple here -->
+                        <button class="btn btn-secondary w-100" disabled>Enrolled</button>
+                    {% else %}
+                        <a href="{% url 'enroll_course' course.pk %}" class="btn btn-primary w-100">Enroll Now</a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

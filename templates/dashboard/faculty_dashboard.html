@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Faculty Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <h1>Faculty Dashboard</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-header">Assigned Courses</div>
+            <div class="card-body">
+                <h5 class="card-title">{{ user.assigned_courses.count }}</h5>
+                <a href="{% url 'my_courses' %}" class="btn btn-light btn-sm">Manage Courses</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-warning mb-3">
+            <div class="card-header">Pending Grading</div>
+            <div class="card-body">
+                <h5 class="card-title">0</h5> <!-- Placeholder -->
+                <a href="#" class="btn btn-light btn-sm">Grade Exams</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
