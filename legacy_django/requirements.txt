@@ -6,3 +6,5 @@ crispy-bootstrap5
 dj-database-url
 whitenoise
 gunicorn
+djangorestframework
+django-cors-headers

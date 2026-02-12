@@ -10,6 +10,7 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('academic/', include('academic.urls')),
+    path('api/academic/', include('academic.api_urls')), # API endpoints
     # Add other apps as needed
 ]
 
