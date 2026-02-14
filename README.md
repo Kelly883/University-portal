@@ -1,72 +1,36 @@
-# University Portal System
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-A fully functional university portal built with Django, PostgreSQL, and Bootstrap 5.
+## Getting Started
 
-## Features
+First, run the development server:
 
-- **Role-based Access Control**: Admin, Faculty, Student, Parent.
-- **Student Module**: Enrollment, Grades, Attendance, Notifications.
-- **Faculty Module**: Course Management, Attendance Marking, Grading.
-- **Admin Module**: User Management, Course Management, Analytics.
-- **Notifications**: System-generated alerts.
-- **Responsive Design**: Mobile-friendly UI.
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-## Prerequisites
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-- Python 3.8+
-- PostgreSQL
-- pip
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-## Installation
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-1. **Install Dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
+## Learn More
 
-2. **Database Setup**
-   Ensure PostgreSQL is running. Create a database named `university_portal` (or customize via environment variables).
-   
-   Default credentials (can be overridden):
-   - Name: `university_portal`
-   - User: `postgres`
-   - Password: `password`
-   - Host: `localhost`
-   - Port: `5432`
+To learn more about Next.js, take a look at the following resources:
 
-   To override, set environment variables:
-   ```bash
-   export DB_NAME='your_db_name'
-   export DB_USER='your_db_user'
-   export DB_PASSWORD='your_db_password'
-   ```
-   (On Windows PowerShell: `$env:DB_NAME='your_db_name'`)
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-3. **Run Migrations**
-   ```bash
-   python manage.py migrate
-   ```
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-4. **Create Superuser (Admin)**
-   ```bash
-   python manage.py createsuperuser
-   ```
+## Deploy on Vercel
 
-5. **Run Development Server**
-   ```bash
-   python manage.py runserver
-   ```
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-6. **Access the Portal**
-   - Open [http://127.0.0.1:8000](http://127.0.0.1:8000)
-   - Login with the superuser account to access the Admin Dashboard.
-   - Use the Sign Up page to create Student/Faculty accounts.
-
-## Project Structure
-
-- `accounts`: User authentication and profiles.
-- `academic`: Departments, Courses, Enrollments, Materials.
-- `attendance`: Attendance tracking.
-- `exams`: Exams and Results.
-- `notifications`: System notifications.
-- `templates`: HTML templates using Bootstrap 5.
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
