@@ -11,11 +11,35 @@ export async function GET(req: Request) {
   const stream = new ReadableStream({
     async start(controller) {
       const encoder = new TextEncoder();
+      let isStreamClosed = false;
+
+      const safeEnqueue = (data: Uint8Array) => {
+        if (isStreamClosed) return;
+        try {
+          controller.enqueue(data);
+        } catch (error) {
+          console.error("Stream enqueue error:", error);
+          isStreamClosed = true;
+        }
+      };
+
+      const safeClose = () => {
+        if (isStreamClosed) return;
+        try {
+          controller.close();
+        } catch (error) {
+          console.error("Stream close error:", error);
+        } finally {
+          isStreamClosed = true;
+        }
+      };
 
       // Send initial connection message
-      controller.enqueue(encoder.encode("data: connected\n\n"));
+      safeEnqueue(encoder.encode("data: connected\n\n"));
 
       const checkNotifications = async () => {
+        if (isStreamClosed) return;
+        
         try {
           // Find unread notifications created in the last few seconds
           // In a real production app with high load, this polling is inefficient.
@@ -41,11 +65,11 @@ export async function GET(req: Request) {
           });
 
           if (notifications.length > 0) {
-            controller.enqueue(encoder.encode(`data: ${JSON.stringify(notifications)}\n\n`));
+            safeEnqueue(encoder.encode(`data: ${JSON.stringify(notifications)}\n\n`));
           }
         } catch (error) {
           console.error("SSE Error:", error);
-          controller.close();
+          safeClose();
         }
       };
 
@@ -55,7 +79,7 @@ export async function GET(req: Request) {
       // Close on client disconnect (handled by runtime usually, but good practice)
       req.signal.addEventListener("abort", () => {
         clearInterval(interval);
-        controller.close();
+        safeClose();
       });
     },
   });
