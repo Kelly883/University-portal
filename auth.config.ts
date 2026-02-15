@@ -7,19 +7,25 @@ export const authConfig = {
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
+      const userRole = auth?.user?.role;
       const isOnDashboard = nextUrl.pathname.startsWith("/dashboard");
       const isOnAdmin = nextUrl.pathname.startsWith("/admin");
+      const isOnFaculty = nextUrl.pathname.startsWith("/faculty");
+      const isOnStudent = nextUrl.pathname.startsWith("/student");
       
-      if (isOnDashboard) {
-        if (isLoggedIn) return true;
-        return false; // Redirect unauthenticated users to login page
+      // Public routes
+      if (!isLoggedIn) {
+        if (isOnDashboard || isOnAdmin || isOnFaculty || isOnStudent) {
+          return false; // Redirect to login
+        }
+        return true;
       }
-      
-      if (isOnAdmin) {
-        if (isLoggedIn && auth?.user?.role === "ADMIN") return true;
-        return false; // Redirect unauthorized users
-      }
-      
+
+      // RBAC logic
+      if (isOnAdmin && userRole !== "ADMIN") return Response.redirect(new URL("/dashboard", nextUrl));
+      if (isOnFaculty && userRole !== "FACULTY") return Response.redirect(new URL("/dashboard", nextUrl));
+      if (isOnStudent && userRole !== "STUDENT") return Response.redirect(new URL("/dashboard", nextUrl));
+
       return true;
     },
     jwt({ token, user }) {
