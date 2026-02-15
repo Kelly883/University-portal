@@ -6,7 +6,7 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 import type { Adapter } from "next-auth/adapters";
 
-import prisma from "./lib/prisma";
+import prisma from "@/lib/prisma"; // Updated import to use alias
 import { authConfig } from "./auth.config";
 
 export const {

@@ -1,10 +1,14 @@
+import { PrismaClient } from "@prisma/client";
 import { Pool } from "@neondatabase/serverless";
 import { PrismaNeon } from "@prisma/adapter-neon";
-import { PrismaClient } from "@prisma/client";
 
 const prismaClientSingleton = () => {
-  const neon = new Pool({ connectionString: process.env.DATABASE_URL });
-  const adapter = new PrismaNeon(neon);
+  // If we're in a serverless environment (like Vercel/Railway), use the Neon adapter
+  const connectionString = process.env.DATABASE_URL;
+
+  const pool = new Pool({ connectionString });
+  const adapter = new PrismaNeon(pool);
+  
   return new PrismaClient({ adapter });
 };
 
