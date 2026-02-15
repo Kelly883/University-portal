@@ -4,6 +4,7 @@ import { User, Bell, Search, LogOut } from "lucide-react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { signOut } from "@/auth";
+import { NotificationToast } from "@/components/ui/notification-toast";
 
 // This layout is a server component that wraps all dashboard pages
 export default async function Layout({ children }: { children: React.ReactNode }) {
@@ -79,6 +80,9 @@ export default async function Layout({ children }: { children: React.ReactNode }
             {children}
           </div>
         </main>
+        
+        {/* Real-time Notifications */}
+        <NotificationToast />
       </div>
     </div>
   );
