@@ -4,7 +4,9 @@ import { PrismaNeon } from "@prisma/adapter-neon";
 
 const prismaClientSingleton = () => {
   // If we're in a serverless environment (like Vercel/Railway), use the Neon adapter
-  const connectionString = process.env.DATABASE_URL;
+  // Fallback to a dummy connection string if DATABASE_URL is missing (e.g. during build)
+  // This prevents build failures when force-dynamic is used but the module is still evaluated.
+  const connectionString = process.env.DATABASE_URL || "postgresql://dummy:dummy@localhost:5432/dummy";
 
   const pool = new Pool({ connectionString });
   const adapter = new PrismaNeon(pool);
