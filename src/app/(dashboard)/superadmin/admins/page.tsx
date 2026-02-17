@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, X } from "lucide-react";
@@ -96,7 +96,7 @@ export default function AdminsPage() {
   };
 
   // Load admins on component mount
-  React.useEffect(() => {
+  useEffect(() => {
     loadAdmins();
   }, []);
 
