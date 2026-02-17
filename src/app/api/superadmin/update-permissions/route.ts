@@ -1,6 +1,7 @@
 import { auth } from '@/auth';
 import prisma from '@/lib/prisma';
 import { NextResponse } from 'next/server';
+import { Permission } from '@prisma/client';
 
 export async function POST(request: Request) {
   try {
@@ -44,7 +45,7 @@ export async function POST(request: Request) {
       await prisma.adminPermission.createMany({
         data: permissions.map((permission: string) => ({
           adminId,
-          permission,
+          permission: permission as Permission,
           grantedBy: session.user.id as string,
         })),
       });
