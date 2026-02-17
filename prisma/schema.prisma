@@ -203,5 +203,3 @@ model Department {
 
   @@unique([facultyId, acronym])
 }
-  updatedAt     DateTime @updatedAt
-}
