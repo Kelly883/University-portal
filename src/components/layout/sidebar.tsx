@@ -12,18 +12,25 @@ import {
   Settings, 
   LogOut,
   ShieldCheck,
-  FileText
+  FileText,
+  Crown
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 
 interface SidebarProps {
-  role: "ADMIN" | "FACULTY" | "STUDENT";
+  role: "SUPERADMIN" | "ADMIN" | "FACULTY" | "STUDENT";
 }
 
 export function Sidebar({ role }: SidebarProps) {
   const pathname = usePathname();
 
   const links = {
+    SUPERADMIN: [
+      { href: "/superadmin", label: "Dashboard", icon: LayoutDashboard },
+      { href: "/superadmin/admins", label: "Admin Accounts", icon: Users },
+      { href: "/superadmin/permissions", label: "Permissions", icon: ShieldCheck },
+      { href: "/superadmin/approvals", label: "Approvals", icon: FileText },
+    ],
     ADMIN: [
       { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
       { href: "/admin/users", label: "Users", icon: Users },
@@ -50,6 +57,9 @@ export function Sidebar({ role }: SidebarProps) {
   return (
     <aside className="w-64 bg-accent text-white flex flex-col h-screen fixed left-0 top-0 border-r border-university-gold/20">
       <div className="p-6 flex items-center justify-center border-b border-university-gold/10">
+        {role === "SUPERADMIN" && (
+          <Crown className="w-5 h-5 text-university-gold mr-2" />
+        )}
         <div className="w-10 h-10 bg-university-gold rounded-full flex items-center justify-center mr-3 text-accent font-bold">
           TU
         </div>

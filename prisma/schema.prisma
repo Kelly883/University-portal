@@ -9,15 +9,40 @@ generator client {
 }
 
 enum Role {
+  SUPERADMIN
   ADMIN
   FACULTY
   STUDENT
+}
+
+enum Permission {
+  CREATE_COURSE
+  EDIT_COURSE
+  DELETE_COURSE
+  REGISTER_STUDENT
+  REMOVE_STUDENT
+  CREATE_FEES
+  EDIT_FEES
+  DELETE_FEES
+  MANAGE_GRADES
+  VIEW_REPORTS
+  CREATE_ADMIN
+  EDIT_ADMIN
+  DELETE_ADMIN
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 model User {
   id            String    @id @default(cuid())
   name          String?
   email         String?   @unique
+  staffId       String?   @unique  // For faculty/admin staff identification
+  matricNo      String?   @unique  // For student matric number
   emailVerified DateTime?
   image         String?
   password      String?
@@ -26,11 +51,6 @@ model User {
   accounts      Account[]
   sessions      Session[]
   
-  // Explicit Many-to-Many via implicit relation or explicit? 
-  // User requested: courses Course[] @relation("Enrollments", references: [id])
-  // But for M-N in Prisma, we usually do explicit join table if we need extra data (like enrollment date), 
-  // or implicit if we don't. The user's schema suggests implicit M-N for "Enrollments".
-  // However, Grades are separate. 
   courses       Course[]  @relation("Enrollments")
   
   notifications Notification[]
@@ -39,6 +59,18 @@ model User {
 
   // Faculty specific relation (courses taught)
   coursesTaught Course[] @relation("FacultyCourses")
+  
+  // Admin permissions
+  permissions   AdminPermission[]
+  
+  // Superadmin created admins
+  createdAdmins User[] @relation("SuperadminAdmins")
+  createdBy     User? @relation("SuperadminAdmins", fields: [createdById], references: [id])
+  createdById   String?
+  
+  // Approval workflows
+  approvalsCreated    ApprovalRequest[] @relation("CreatedBy")
+  approvalsApproved   ApprovalRequest[] @relation("ApprovedBy")
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -120,4 +152,56 @@ model Notification {
   message   String
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
+}
+
+model AdminPermission {
+  id        String   @id @default(cuid())
+  adminId   String
+  admin     User     @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  permission Permission
+  grantedAt DateTime @default(now())
+  grantedBy String   // Superadmin ID who granted this
+  
+  @@unique([adminId, permission])
+}
+
+model ApprovalRequest {
+  id            String   @id @default(cuid())
+  type          String   // "COURSE_CREATE", "STUDENT_REGISTER", "FEES_CREATE", etc.
+  status        ApprovalStatus @default(PENDING)
+  
+  createdById   String
+  createdBy     User     @relation("CreatedBy", fields: [createdById], references: [id])
+  
+  approvedById  String?
+  approvedBy    User?    @relation("ApprovedBy", fields: [approvedById], references: [id])
+  
+  data          String   @db.Text // JSON data for the request
+  rejectionReason String?
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Faculty {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  acronym   String   @unique
+  departments Department[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Department {
+  id        String   @id @default(cuid())
+  name      String
+  acronym   String
+  facultyId String
+  faculty   Faculty  @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([facultyId, acronym])
+}
+  updatedAt     DateTime @updatedAt
 }
