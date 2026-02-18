@@ -9,7 +9,7 @@ if (process.env.NEXTAUTH_URL && !process.env.NEXTAUTH_URL.startsWith("http")) {
   process.env.NEXTAUTH_URL = `https://${process.env.NEXTAUTH_URL}`;
 }
 
-const authMiddleware = NextAuth(authConfig).auth;
+const { auth } = NextAuth(authConfig);
 
 export async function middleware(request: NextRequest) {
   // Check if trying to access superadmin signup page
@@ -30,7 +30,8 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  return authMiddleware(request);
+  // Use auth for protected routes if needed
+  return NextResponse.next();
 }
 
 export const config = {
