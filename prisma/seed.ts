@@ -6,6 +6,18 @@ const prisma = new PrismaClient();
 async function main() {
   const hashedPassword = await bcrypt.hash('password123', 10);
 
+  // Create Superadmin
+  const superadmin = await prisma.user.upsert({
+    where: { email: 'superadmin@titan.edu' },
+    update: {},
+    create: {
+      email: 'superadmin@titan.edu',
+      name: 'Superadmin',
+      password: hashedPassword,
+      role: Role.SUPERADMIN,
+    },
+  });
+
   // Create Admin
   const admin = await prisma.user.upsert({
     where: { email: 'admin@titan.edu' },
@@ -56,7 +68,7 @@ async function main() {
     },
   });
 
-  console.log({ admin, faculty, student, course });
+  console.log({ superadmin, admin, faculty, student, course });
 }
 
 main()
