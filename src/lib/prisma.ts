@@ -1,20 +1,31 @@
 import { PrismaClient } from "@prisma/client";
-import { Pool } from "@neondatabase/serverless";
-import { PrismaNeon } from "@prisma/adapter-neon";
 
 const prismaClientSingleton = () => {
-  // If we're in a serverless environment (like Vercel/Railway), use the Neon adapter
-  // Fallback to a dummy connection string if DATABASE_URL is missing (e.g. during build)
-  // This prevents build failures when force-dynamic is used but the module is still evaluated.
   const connectionString = process.env.DATABASE_URL || "postgresql://dummy:dummy@localhost:5432/dummy";
 
-  const pool = new Pool({ connectionString });
-  const adapter = new PrismaNeon(pool);
-  
-  return new PrismaClient({ adapter });
+  // Use Neon serverless adapter only when connecting to a Neon database
+  if (connectionString.includes("neon.tech") || connectionString.includes("neon.database")) {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { Pool } = require("@neondatabase/serverless");
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { PrismaNeon } = require("@prisma/adapter-neon");
+    const pool = new Pool({ connectionString });
+    const adapter = new PrismaNeon(pool);
+    return new PrismaClient({ adapter });
+  }
+
+  // Use standard PrismaClient for Railway PostgreSQL and local development
+  return new PrismaClient({
+    datasources: {
+      db: {
+        url: connectionString,
+      },
+    },
+  });
 };
 
 declare global {
+  // eslint-disable-next-line no-var
   var prismaGlobal: undefined | ReturnType<typeof prismaClientSingleton>;
 }
 
