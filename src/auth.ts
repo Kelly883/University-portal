@@ -9,6 +9,12 @@ import type { Adapter } from "next-auth/adapters";
 import prisma from "@/lib/prisma"; // Updated import to use alias
 import { authConfig } from "./auth.config";
 
+// Patch environment variables to ensure valid URLs
+// This fixes "TypeError: Invalid URL" when NEXTAUTH_URL is set to just the hostname (e.g. in Railway)
+if (process.env.NEXTAUTH_URL && !process.env.NEXTAUTH_URL.startsWith("http")) {
+  process.env.NEXTAUTH_URL = `https://${process.env.NEXTAUTH_URL}`;
+}
+
 export const {
   handlers: { GET, POST },
   auth,
