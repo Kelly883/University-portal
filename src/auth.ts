@@ -15,6 +15,16 @@ if (process.env.NEXTAUTH_URL && !process.env.NEXTAUTH_URL.startsWith("http")) {
   process.env.NEXTAUTH_URL = `https://${process.env.NEXTAUTH_URL}`;
 }
 
+// Simple in-memory rate limiter for credential-based sign-ins.
+// NOTE: This is per-process only. Replace with Redis/Upstash for production.
+declare global {
+  // eslint-disable-next-line no-var
+  var credentialsRateLimiter: Map<string, { count: number; first: number }> | undefined;
+}
+
+const credentialsLimiter = globalThis.credentialsRateLimiter ?? new Map<string, { count: number; first: number }>();
+globalThis.credentialsRateLimiter = credentialsLimiter;
+
 export const {
   handlers: { GET, POST },
   auth,
@@ -24,13 +34,28 @@ export const {
   ...authConfig,
   secret: process.env.AUTH_SECRET,
   adapter: PrismaAdapter(prisma) as any,
-  session: { strategy: "jwt" },
-  trustHost: true,
+  session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60 }, // 30 days
+  // Cookie security defaults - enforce Secure cookies in production
+  cookies: {
+    sessionToken: {
+      name: process.env.NODE_ENV === 'production' ? '__Host-next-auth.session-token' : 'next-auth.session-token',
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
+        path: '/',
+      },
+    },
+  },
+  // Only enable trustHost when explicitly set (safer default)
+  trustHost: process.env.TRUST_HOST === 'true' || false,
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      allowDangerousEmailAccountLinking: true,
+      // Disallow automatic linking of accounts by email in production.
+      // Set to true only for controlled testing environments.
+      allowDangerousEmailAccountLinking: false,
     }),
     Credentials({
       async authorize(credentials) {
@@ -44,7 +69,22 @@ export const {
 
         if (parsedCredentials.success) {
           const { identifier, identifierType, password } = parsedCredentials.data;
-          
+
+          // Rate limit by identifier (per-account) to mitigate brute force attempts.
+          const key = `cred:${identifier}`;
+          const now = Date.now();
+          const windowMs = 15 * 60 * 1000; // 15 minutes
+          const maxAttempts = 5;
+          const entry = credentialsLimiter.get(key) ?? { count: 0, first: now };
+          if (now - entry.first > windowMs) {
+            entry.count = 0;
+            entry.first = now;
+          }
+          if (entry.count >= maxAttempts) {
+            // Soft-fail - don't reveal rate limit to client via different status
+            return null;
+          }
+
           let user = null;
 
           // Find user based on identifier type
@@ -62,11 +102,23 @@ export const {
             });
           }
 
-          if (!user || !user.password) return null;
-          
+          if (!user || !user.password) {
+            entry.count += 1;
+            credentialsLimiter.set(key, entry);
+            return null;
+          }
+
           const passwordsMatch = await bcrypt.compare(password, user.password);
 
-          if (passwordsMatch) return user;
+          if (!passwordsMatch) {
+            entry.count += 1;
+            credentialsLimiter.set(key, entry);
+            return null;
+          }
+
+          // Success: clear limiter entry for this identifier
+          credentialsLimiter.delete(key);
+          return user;
         }
 
         console.log("Invalid credentials");
