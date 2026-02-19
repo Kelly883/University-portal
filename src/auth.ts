@@ -47,9 +47,15 @@ export const {
       },
     },
   },
-  // In production, NEXTAUTH_URL must be set. If it cannot be, set TRUST_HOST=true.
-  // RECOMMENDED: Set NEXTAUTH_URL=https://<your-domain> in production environment variables.
-  trustHost: process.env.TRUST_HOST === 'true' || false,
+  // Trust host configuration:
+  // 1. If NEXTAUTH_URL is set and valid (with protocol), use trustHost: false (safer)
+  // 2. If NEXTAUTH_URL is not set or invalid, allow TRUST_HOST=true to override (for shared hosts like Railway)
+  // RECOMMENDED: Set NEXTAUTH_URL=https://<your-domain> in production for better security.
+  // FALLBACK: Set TRUST_HOST=true if NEXTAUTH_URL cannot be set.
+  trustHost:
+    !process.env.NEXTAUTH_URL || !process.env.NEXTAUTH_URL.startsWith("http")
+      ? process.env.TRUST_HOST === "true"
+      : false,
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
