@@ -9,7 +9,15 @@ if (process.env.NEXTAUTH_URL && !process.env.NEXTAUTH_URL.startsWith("http")) {
   process.env.NEXTAUTH_URL = `https://${process.env.NEXTAUTH_URL}`;
 }
 
-const { auth } = NextAuth(authConfig);
+const { auth } = NextAuth({
+  ...authConfig,
+  // Trust host for production deployments (Railway, Vercel, etc.)
+  // Middleware must match the trustHost setting in src/auth.ts
+  trustHost:
+    !process.env.NEXTAUTH_URL || !process.env.NEXTAUTH_URL.startsWith("http")
+      ? process.env.TRUST_HOST === "true"
+      : false,
+});
 
 export async function middleware(request: NextRequest) {
   // Check if trying to access superadmin signup page
