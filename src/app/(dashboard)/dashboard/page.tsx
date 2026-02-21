@@ -12,7 +12,7 @@ export default async function DashboardPage() {
 
   switch (role) {
     case "SUPERADMIN":
-      redirect("/dashboard/superadmin");
+      redirect("/superadmin");
     case "ADMIN":
       redirect("/admin");
     case "FACULTY":
