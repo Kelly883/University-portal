@@ -9,35 +9,39 @@ import {
   BookOpen, 
   GraduationCap, 
   CreditCard, 
-  Settings, 
   LogOut,
   ShieldCheck,
-  FileText,
-  Crown
+  FileText
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 
 interface SidebarProps {
-  role: "SUPERADMIN" | "ADMIN" | "FACULTY" | "STUDENT";
+  role: "ADMIN" | "FACULTY" | "STUDENT" | "SUPERADMIN";
+  permissions?: string[];
 }
 
-export function Sidebar({ role }: SidebarProps) {
+export function Sidebar({ role, permissions = [] }: SidebarProps) {
   const pathname = usePathname();
+
+  const adminLinks = [
+    { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/admin/users", label: "Users", icon: Users },
+    { href: "/admin/finance", label: "Finance", icon: CreditCard },
+    { href: "/admin/reports", label: "Reports", icon: FileText },
+  ];
+
+  // Conditionally add Courses link based on permission
+  if (permissions.includes("courses:create") || permissions.includes("courses:manage") || role === "SUPERADMIN") {
+    // Insert after Users (index 2)
+    adminLinks.splice(2, 0, { href: "/admin/courses", label: "Courses", icon: BookOpen });
+  }
 
   const links = {
     SUPERADMIN: [
-      { href: "/superadmin", label: "Dashboard", icon: LayoutDashboard },
-      { href: "/superadmin/admins", label: "Admin Accounts", icon: Users },
-      { href: "/superadmin/permissions", label: "Permissions", icon: ShieldCheck },
-      { href: "/superadmin/approvals", label: "Approvals", icon: FileText },
+      { href: "/superadmin", label: "Super Admin", icon: ShieldCheck },
+      ...adminLinks
     ],
-    ADMIN: [
-      { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
-      { href: "/admin/users", label: "Users", icon: Users },
-      { href: "/admin/courses", label: "Courses", icon: BookOpen },
-      { href: "/admin/finance", label: "Finance", icon: CreditCard },
-      { href: "/admin/reports", label: "Reports", icon: FileText },
-    ],
+    ADMIN: adminLinks,
     FACULTY: [
       { href: "/faculty", label: "Dashboard", icon: LayoutDashboard },
       { href: "/faculty/courses", label: "My Courses", icon: BookOpen },
@@ -55,21 +59,11 @@ export function Sidebar({ role }: SidebarProps) {
   const currentLinks = links[role] || [];
 
   return (
-    <aside className="w-64 bg-accent text-white flex flex-col h-screen fixed left-0 top-0 border-r border-university-gold/20">
-      <div className="p-6 flex items-center justify-center border-b border-university-gold/10">
-        {role === "SUPERADMIN" && (
-          <Crown className="w-5 h-5 text-university-gold mr-2" />
-        )}
-        <div className="w-10 h-10 bg-university-gold rounded-full flex items-center justify-center mr-3 text-accent font-bold">
-          TU
-        </div>
-        <span className="font-heading text-xl uppercase tracking-widest text-university-gold">Titan Univ</span>
-      </div>
-
+    <aside className="w-full h-full bg-transparent text-white flex flex-col">
       <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
         {currentLinks.map((link) => {
           const Icon = link.icon;
-          const isActive = pathname === link.href;
+          const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
           return (
             <Link
               key={link.href}

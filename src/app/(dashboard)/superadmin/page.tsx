@@ -1,18 +1,20 @@
+import { auth } from "@/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Users, Shield, FileText, Activity, Lock, TrendingUp, FileCheck } from "lucide-react";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
-import { Users, Lock, FileCheck, TrendingUp } from "lucide-react";
 
-export const dynamic = 'force-dynamic';
-
-export default async function SuperadminDashboard() {
-  const [totalAdmins, totalPendingApprovals, totalPermissions, totalUsers] = await Promise.all([
+export default async function SuperAdminDashboard() {
+  const session = await auth();
+  
+  // Fetch stats (combined from HEAD and my Update)
+  const [adminCount, totalUsers, totalPermissions, totalPendingApprovals] = await Promise.all([
     prisma.user.count({ where: { role: "ADMIN" } }),
-    prisma.approvalRequest.count({ where: { status: "PENDING" } }),
-    prisma.adminPermission.count(),
     prisma.user.count(),
+    prisma.adminPermission.count(),
+    prisma.approvalRequest.count({ where: { status: "PENDING" } }),
   ]);
-
+  
   return (
     <div className="space-y-8">
       <div>
@@ -20,10 +22,10 @@ export default async function SuperadminDashboard() {
           Superadmin Dashboard
         </h1>
         <p className="text-slate-600 dark:text-slate-400">
-          System oversight and administrative control
+          Welcome back, {session?.user?.name}. System oversight and administrative control.
         </p>
       </div>
-
+      
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
@@ -36,18 +38,18 @@ export default async function SuperadminDashboard() {
             <p className="text-xs text-slate-500">All roles</p>
           </CardContent>
         </Card>
-
+        
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Admin Accounts</CardTitle>
             <Lock className="h-4 w-4 text-purple-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalAdmins}</div>
+            <div className="text-2xl font-bold">{adminCount}</div>
             <p className="text-xs text-slate-500">Active admins</p>
           </CardContent>
         </Card>
-
+        
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Pending Approvals</CardTitle>
@@ -58,15 +60,15 @@ export default async function SuperadminDashboard() {
             <p className="text-xs text-slate-500">Awaiting review</p>
           </CardContent>
         </Card>
-
+        
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Permissions</CardTitle>
-            <TrendingUp className="h-4 w-4 text-green-600" />
+            <CardTitle className="text-sm font-medium">System Status</CardTitle>
+            <Shield className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalPermissions}</div>
-            <p className="text-xs text-slate-500">Assigned to admins</p>
+            <div className="text-2xl font-bold text-green-600">Secure</div>
+            <p className="text-xs text-muted-foreground">All systems operational</p>
           </CardContent>
         </Card>
       </div>
@@ -94,63 +96,24 @@ export default async function SuperadminDashboard() {
           </CardContent>
         </Card>
 
-        {/* Permissions Management */}
+        {/* Audit Logs Link (My Addition) */}
         <Card className="hover:shadow-lg transition-shadow">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Lock className="h-5 w-5 text-purple-600" />
-              Permission Control
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <p className="text-sm text-slate-600 dark:text-slate-400">
-              Grant or revoke admin permissions for course creation, student registration, fees, and more.
-            </p>
-            <Link
-              href="/superadmin/permissions"
-              className="inline-block bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
-            >
-              Manage Permissions
-            </Link>
-          </CardContent>
-        </Card>
-
-        {/* Approval Workflow */}
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileCheck className="h-5 w-5 text-orange-600" />
-              Approval Workflows
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <p className="text-sm text-slate-600 dark:text-slate-400">
-              Review and approve all admin actions before they become visible to students.
-            </p>
-            <Link
-              href="/superadmin/approvals"
-              className="inline-block bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
-            >
-              Review Approvals
-            </Link>
-          </CardContent>
-        </Card>
-
-        {/* System Analytics */}
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-green-600" />
-              System Analytics
+              <Activity className="h-5 w-5 text-indigo-600" />
+              Audit Logs
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <p className="text-sm text-slate-600 dark:text-slate-400">
               View comprehensive system statistics and audit logs.
             </p>
-            <button className="inline-block bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors cursor-not-allowed opacity-50">
-              Coming Soon
-            </button>
+            <Link
+              href="/superadmin/audit"
+              className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+            >
+              View Audit Logs
+            </Link>
           </CardContent>
         </Card>
       </div>

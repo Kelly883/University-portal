@@ -14,7 +14,8 @@ export default async function Layout({ children }: { children: React.ReactNode }
     redirect("/login");
   }
 
-  const role = session.user.role as "ADMIN" | "FACULTY" | "STUDENT";
+  const role = session.user.role as "ADMIN" | "FACULTY" | "STUDENT" | "SUPERADMIN";
+  const permissions = (session.user as any).permissions || [];
 
   return (
     <div className="flex h-screen bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 overflow-hidden">
@@ -28,7 +29,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
         </div>
 
         <div className="flex-1 overflow-y-auto py-4">
-          <Sidebar role={role} />
+          <Sidebar role={role} permissions={permissions} />
         </div>
       </aside>
 
