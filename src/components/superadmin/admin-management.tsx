@@ -25,7 +25,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { PERMISSIONS, Permission } from "@/lib/permissions";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Plus, Edit, Trash2 } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 interface AdminUser {
   id: string;

@@ -42,6 +42,7 @@ export async function POST(req: Request) {
         studentId: body.studentId,
         amount: body.amount,
         status: body.status,
+        provider: "manual",
       },
     });
 

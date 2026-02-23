@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { Sidebar } from "@/components/dashboard/sidebar";
+import { Sidebar } from "@/components/layout/sidebar";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { LayoutDashboard, Users, FileText, Shield, LogOut } from "lucide-react";
