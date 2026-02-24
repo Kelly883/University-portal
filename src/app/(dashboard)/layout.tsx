@@ -25,7 +25,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
           <div className="w-8 h-8 bg-university-gold rounded-full flex items-center justify-center mr-3 text-accent font-bold shadow-lg shadow-university-gold/20">
             TU
           </div>
-          <span className="font-heading text-xl uppercase tracking-widest text-university-gold drop-shadow-sm">Titan Univ</span>
+          <span className="font-heading text-xl uppercase tracking-widest text-university-gold drop-shadow-sm">Titan University</span>
         </div>
 
         <div className="flex-1 overflow-y-auto py-4">
