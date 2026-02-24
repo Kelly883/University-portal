@@ -22,7 +22,7 @@ export default async function SuperAdminLayout({
   return (
     <div className="flex h-screen bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 overflow-hidden">
       {/* Sidebar */}
-      <aside className="w-64 bg-accent text-white flex flex-col border-r border-university-gold/20 flex-shrink-0 z-20 shadow-xl">
+      <aside className="w-64 bg-accent flex flex-col border-r border-university-gold/20 flex-shrink-0 z-20 shadow-xl">
         <div className="h-16 flex items-center px-6 border-b border-white/10 bg-accent/50 backdrop-blur-sm">
           <div className="w-8 h-8 bg-university-gold rounded-full flex items-center justify-center mr-3 text-accent font-bold shadow-lg shadow-university-gold/20">
             TU

@@ -62,7 +62,7 @@ export function Sidebar({ role, permissions = [] }: SidebarProps) {
   const currentLinks = links[role] || [];
 
   return (
-    <aside className="w-full h-full bg-transparent text-white flex flex-col">
+    <aside className="w-full h-full bg-transparent flex flex-col">
       <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
         {currentLinks.map((link) => {
           const Icon = link.icon;
@@ -75,7 +75,7 @@ export function Sidebar({ role, permissions = [] }: SidebarProps) {
                 "flex items-center gap-3 px-4 py-3 rounded-md transition-all font-display text-sm",
                 isActive
                   ? "bg-university-gold text-accent font-bold shadow-md"
-                  : "text-slate-300 hover:bg-white/5 hover:text-white"
+                  : "text-slate-700 dark:text-slate-300 hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
               )}
             >
               <Icon size={18} />
@@ -88,7 +88,7 @@ export function Sidebar({ role, permissions = [] }: SidebarProps) {
       <div className="p-4 border-t border-university-gold/10">
         <button
           onClick={() => signOut()}
-          className="flex items-center gap-3 px-4 py-3 w-full text-left text-red-400 hover:bg-red-500/10 hover:text-red-300 rounded-md transition-colors text-sm"
+          className="flex items-center gap-3 px-4 py-3 w-full text-left text-red-500 hover:bg-red-500/10 hover:text-red-600 rounded-md transition-colors text-sm"
         >
           <LogOut size={18} />
           Sign Out
