@@ -38,8 +38,11 @@ export function Sidebar({ role, permissions = [] }: SidebarProps) {
 
   const links = {
     SUPERADMIN: [
-      { href: "/superadmin", label: "Super Admin", icon: ShieldCheck },
-      ...adminLinks
+      { href: "/superadmin", label: "Dashboard", icon: LayoutDashboard },
+      { href: "/superadmin/admins", label: "Admins", icon: Users },
+      { href: "/superadmin/faculties", label: "Faculties", icon: GraduationCap },
+      { href: "/superadmin/departments", label: "Departments", icon: BookOpen },
+      { href: "/superadmin/audit", label: "Audit Logs", icon: FileText },
     ],
     ADMIN: adminLinks,
     FACULTY: [
