@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, Save, X, Upload, FileText, ArrowLeft, Shield } from "lucide-react";
 import Link from "next/link";
 
-export default function CreateCourseForm({ facultyList }: { facultyList: any[] }) {
+export default function CreateCourseForm({ facultyList, departmentList = [] }: { facultyList: any[], departmentList?: any[] }) {
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -203,10 +203,20 @@ export default function CreateCourseForm({ facultyList }: { facultyList: any[] }
                         <SelectValue placeholder="Select Department" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Computer Science">Computer Science</SelectItem>
-                        <SelectItem value="Engineering">Engineering</SelectItem>
-                        <SelectItem value="Business">Business</SelectItem>
-                        <SelectItem value="Arts">Arts</SelectItem>
+                        {departmentList && departmentList.length > 0 ? (
+                          departmentList.map((dept) => (
+                            <SelectItem key={dept.id} value={dept.name}>
+                              {dept.name} ({dept.acronym})
+                            </SelectItem>
+                          ))
+                        ) : (
+                          <>
+                            <SelectItem value="Computer Science">Computer Science</SelectItem>
+                            <SelectItem value="Engineering">Engineering</SelectItem>
+                            <SelectItem value="Business">Business</SelectItem>
+                            <SelectItem value="Arts">Arts</SelectItem>
+                          </>
+                        )}
                       </SelectContent>
                     </Select>
                   </div>

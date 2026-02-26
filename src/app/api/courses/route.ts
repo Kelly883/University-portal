@@ -37,7 +37,7 @@ export async function POST(req: Request) {
   // Check for permission if ADMIN
   if (session?.user?.role === "ADMIN") {
     const permissions = (session.user as any).permissions || [];
-    if (!permissions.includes("courses:create") && !permissions.includes("courses:manage")) {
+    if (!permissions.includes("CREATE_COURSE")) {
        return new NextResponse("Forbidden: Insufficient Permissions", { status: 403 });
     }
   }

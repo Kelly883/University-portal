@@ -26,7 +26,7 @@ export default async function CoursesPage() {
   const permissions = (session?.user as any)?.permissions || [];
   const canCreate = 
     session?.user?.role === "SUPERADMIN" || 
-    (session?.user?.role === "ADMIN" && (permissions.includes("courses:create") || permissions.includes("courses:manage")));
+    (session?.user?.role === "ADMIN" && (permissions.includes("CREATE_COURSE")));
 
   return (
     <div className="space-y-6">

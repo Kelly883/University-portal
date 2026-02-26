@@ -21,7 +21,7 @@ export default function RootLayout({
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
       </head>
-      <body className={`${inter.variable} ${barlow.variable} ${playfair.variable} font-display bg-background-light dark:bg-background-dark min-h-screen flex flex-col items-center justify-center p-4 relative overflow-x-hidden`}>
+      <body className={`${inter.variable} ${barlow.variable} ${playfair.variable} font-display bg-background-light dark:bg-background-dark min-h-screen relative overflow-x-hidden`}>
         {children}
       </body>
     </html>

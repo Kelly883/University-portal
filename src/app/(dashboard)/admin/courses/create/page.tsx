@@ -16,21 +16,27 @@ export default async function CreateCoursePage() {
   const permissions = (session.user as any).permissions || [];
   const hasPermission = 
     session.user.role === "SUPERADMIN" || 
-    (session.user.role === "ADMIN" && (permissions.includes("courses:create") || permissions.includes("courses:manage")));
+    (session.user.role === "ADMIN" && (permissions.includes("CREATE_COURSE")));
 
   if (!hasPermission) {
     redirect("/admin/courses?error=unauthorized");
   }
 
-  // 3. Fetch Data for Form (Faculty list)
-  const faculty = await prisma.user.findMany({
-    where: { role: "FACULTY" },
-    select: { id: true, name: true, email: true },
-  });
+  // 3. Fetch Data for Form (Faculty list and Departments)
+  const [faculty, departments] = await Promise.all([
+    prisma.user.findMany({
+      where: { role: "FACULTY" },
+      select: { id: true, name: true, email: true },
+    }),
+    prisma.department.findMany({
+      select: { id: true, name: true, acronym: true },
+      orderBy: { name: 'asc' }
+    })
+  ]);
 
   return (
     <div className="container mx-auto pb-10">
-      <CreateCourseForm facultyList={faculty} />
+      <CreateCourseForm facultyList={faculty} departmentList={departments} />
     </div>
   );
 }

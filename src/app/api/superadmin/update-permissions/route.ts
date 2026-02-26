@@ -51,6 +51,14 @@ export async function POST(request: Request) {
       });
     }
 
+    // Sync to User.permissions string array for easy session access
+    await prisma.user.update({
+      where: { id: adminId },
+      data: {
+        permissions: permissions
+      }
+    });
+
     return NextResponse.json(
       { message: 'Permissions updated successfully' },
       { status: 200 }

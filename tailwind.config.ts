@@ -10,9 +10,11 @@ const config: Config = {
   theme: {
   	extend: {
   		colors: {
+  			'titan-gold': '#C5A059',
+  			'titan-blue': '#0A1E40', // Deep Oxford Blue
   			'university-gold': '#C5A059',
   			'background-light': '#F8F9FA',
-  			'background-dark': '#0D1117',
+  			'background-dark': '#05080F', // Darker blue-black
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {

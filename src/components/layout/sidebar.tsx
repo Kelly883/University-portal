@@ -31,7 +31,7 @@ export function Sidebar({ role, permissions = [] }: SidebarProps) {
   ];
 
   // Conditionally add Courses link based on permission
-  if (permissions.includes("courses:create") || permissions.includes("courses:manage") || role === "SUPERADMIN") {
+  if (permissions.includes("CREATE_COURSE") || permissions.includes("EDIT_COURSE") || permissions.includes("DELETE_COURSE") || role === "SUPERADMIN") {
     // Insert after Users (index 2)
     adminLinks.splice(2, 0, { href: "/admin/courses", label: "Courses", icon: BookOpen });
   }
@@ -41,6 +41,7 @@ export function Sidebar({ role, permissions = [] }: SidebarProps) {
       { href: "/superadmin", label: "Dashboard", icon: LayoutDashboard },
       { href: "/superadmin/admins", label: "Admins", icon: Users },
       { href: "/superadmin/faculties", label: "Academics", icon: GraduationCap },
+      { href: "/admin/courses", label: "Courses", icon: BookOpen },
       { href: "/superadmin/audit", label: "Audit Logs", icon: FileText },
     ],
     ADMIN: adminLinks,
@@ -73,8 +74,8 @@ export function Sidebar({ role, permissions = [] }: SidebarProps) {
               className={cn(
                 "flex items-center gap-3 px-4 py-3 rounded-md transition-all font-display text-sm",
                 isActive
-                  ? "bg-university-gold text-accent font-bold shadow-md"
-                  : "text-slate-700 dark:text-slate-300 hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
+                  ? "bg-titan-gold text-titan-blue font-bold shadow-md"
+                  : "text-slate-300 hover:bg-white/5 hover:text-white"
               )}
             >
               <Icon size={18} />
