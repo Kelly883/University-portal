@@ -107,3 +107,23 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export async function GET() {
+  try {
+    const existingSuperadmin = await prisma.user.findFirst({
+      where: { role: 'SUPERADMIN' },
+    });
+
+    if (existingSuperadmin) {
+      return NextResponse.json({ exists: true }, { status: 200 });
+    }
+
+    return NextResponse.json({ exists: false }, { status: 200 });
+  } catch (error) {
+    console.error('Error checking superadmin existence:', error);
+    return NextResponse.json(
+      { message: 'Failed to check superadmin status' },
+      { status: 500 }
+    );
+  }
+}
