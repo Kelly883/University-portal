@@ -61,33 +61,42 @@ export default function LoginPage() {
   };
 
   return (
-    <>
-      <div className="fixed inset-0 academic-pattern pointer-events-none"></div>
-      <div className="w-full max-w-[420px] flex flex-col items-stretch relative z-10">
-        <div className="flex flex-col items-center mb-10">
-          <div className="w-24 h-24 bg-accent text-university-gold rounded-full flex items-center justify-center mb-6 shadow-2xl border-4 border-university-gold/20">
-            <span className="material-symbols-outlined text-5xl">account_balance</span>
+    <div className="min-h-screen w-full flex items-center justify-center p-4 relative bg-background-light dark:bg-background-dark overflow-hidden">
+      {/* Background Elements */}
+      <div className="fixed inset-0 academic-pattern pointer-events-none opacity-5"></div>
+      <div className="fixed top-0 left-0 w-full h-2 bg-gradient-to-r from-titan-blue via-titan-gold to-titan-blue z-50"></div>
+      <div className="fixed -z-10 top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
+        <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-titan-gold/10 rounded-full blur-[120px]"></div>
+        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-titan-blue/10 rounded-full blur-[100px]"></div>
+      </div>
+
+      <div className="w-full max-w-[420px] flex flex-col items-center relative z-10">
+        <div className="flex flex-col items-center mb-8">
+          <div className="w-20 h-20 bg-titan-blue text-titan-gold rounded-full flex items-center justify-center mb-4 shadow-2xl border-4 border-titan-gold/20">
+            <span className="material-symbols-outlined text-4xl">account_balance</span>
           </div>
-          <h2 className="text-accent dark:text-university-gold text-xl font-heading uppercase tracking-[0.2em]">
+          <h2 className="text-titan-blue dark:text-titan-gold text-lg font-heading uppercase tracking-[0.2em] font-bold text-center">
             Titan University Portal
           </h2>
-          <div className="w-12 h-0.5 bg-university-gold mt-2"></div>
+          <div className="w-12 h-0.5 bg-titan-gold mt-2"></div>
         </div>
 
-        <div className="mb-10 text-center">
-          <h1 className="text-accent dark:text-white text-5xl font-heading uppercase tracking-tight mb-3">
-            Sign In
-          </h1>
-          <p className="text-slate-500 dark:text-slate-400 text-sm font-medium italic">
-            Secure Access for Scholars & Faculty
-          </p>
-        </div>
+        <div className="w-full bg-white dark:bg-[#161B22] p-8 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-none border border-slate-200 dark:border-white/5 relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-titan-gold/50 to-transparent"></div>
+          
+          <div className="mb-8 text-center">
+            <h1 className="text-titan-blue dark:text-white text-3xl font-heading uppercase tracking-tight mb-2 font-bold">
+              Sign In
+            </h1>
+            <p className="text-slate-500 dark:text-slate-400 text-xs font-medium italic">
+              Secure Access for Scholars & Faculty
+            </p>
+          </div>
 
-        <div className="bg-white dark:bg-[#161B22] p-8 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-none border border-slate-200 dark:border-slate-800">
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-5" onSubmit={handleSubmit}>
             {/* Identifier Type Selection */}
             <div className="flex flex-col gap-2">
-              <label className="text-accent dark:text-slate-300 text-xs font-bold uppercase tracking-wider">
+              <label className="text-titan-blue dark:text-slate-300 text-[10px] font-bold uppercase tracking-wider">
                 University Identification
               </label>
               <div className="grid grid-cols-3 gap-2">
@@ -104,13 +113,13 @@ export default function LoginPage() {
                       setIdentifier("");
                       setError("");
                     }}
-                    className={`px-3 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${
+                    className={`px-2 py-2 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all flex flex-col items-center justify-center gap-1 h-16 ${
                       identifierType === type.value
-                        ? "bg-accent dark:bg-university-gold text-white dark:text-accent border-2 border-accent dark:border-university-gold shadow-md"
-                        : "bg-slate-100 dark:bg-slate-800 text-accent dark:text-slate-300 border-2 border-slate-200 dark:border-slate-700 hover:border-accent dark:hover:border-university-gold"
+                        ? "bg-titan-blue text-titan-gold border border-titan-gold shadow-md"
+                        : "bg-slate-50 dark:bg-white/5 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-white/10 hover:border-titan-blue/30 dark:hover:border-titan-gold/30 hover:bg-white dark:hover:bg-white/10"
                     }`}
                   >
-                    <span className="material-symbols-outlined text-base">{type.icon}</span>
+                    <span className="material-symbols-outlined text-lg">{type.icon}</span>
                     {type.label}
                   </button>
                 ))}
@@ -119,40 +128,30 @@ export default function LoginPage() {
 
             {/* Identifier Input */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-accent dark:text-slate-300 text-xs font-bold uppercase tracking-wider">
+              <label className="text-titan-blue dark:text-slate-300 text-[10px] font-bold uppercase tracking-wider">
                 {getIdentifierLabel()}
               </label>
               <div className="relative group">
                 <input
-                  className={`w-full h-12 bg-slate-50 dark:bg-[#0D1117] border-2 ${
-                    error ? "border-red-500/50 focus:border-red-500" : "border-slate-200 dark:border-slate-800 focus:border-accent dark:focus:border-university-gold"
-                  } focus:ring-0 rounded px-4 text-accent dark:text-white placeholder:text-slate-400 text-sm transition-all`}
+                  className={`w-full h-10 bg-slate-50 dark:bg-black/20 border ${
+                    error ? "border-red-500/50 focus:border-red-500" : "border-slate-200 dark:border-white/10 focus:border-titan-gold"
+                  } focus:ring-1 focus:ring-titan-gold/20 rounded px-3 text-titan-blue dark:text-white placeholder:text-slate-400 text-sm transition-all`}
                   placeholder={getPlaceholder()}
                   type="text"
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
                   required
                 />
-                {error && (
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500">
-                    <span className="material-symbols-outlined text-lg">error</span>
-                  </div>
-                )}
               </div>
-              {error && (
-                <p className="text-red-600 text-[10px] font-bold uppercase tracking-tight px-1">
-                  {error}
-                </p>
-              )}
             </div>
 
             <div className="flex flex-col gap-1.5">
               <div className="flex justify-between items-center">
-                <label className="text-accent dark:text-slate-300 text-xs font-bold uppercase tracking-wider">
+                <label className="text-titan-blue dark:text-slate-300 text-[10px] font-bold uppercase tracking-wider">
                   Access Key
                 </label>
                 <a
-                  className="text-university-gold text-[10px] font-bold uppercase tracking-widest hover:text-accent transition-colors"
+                  className="text-titan-gold text-[10px] font-bold uppercase tracking-widest hover:text-titan-blue dark:hover:text-white transition-colors"
                   href="#"
                 >
                   Forgot Key?
@@ -160,7 +159,7 @@ export default function LoginPage() {
               </div>
               <div className="relative">
                 <input
-                  className="w-full h-12 bg-slate-50 dark:bg-[#0D1117] border-2 border-slate-200 dark:border-slate-800 focus:border-accent dark:focus:border-university-gold focus:ring-0 rounded px-4 pr-12 text-accent dark:text-white placeholder:text-slate-400 text-sm transition-all"
+                  className="w-full h-10 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 focus:border-titan-gold focus:ring-1 focus:ring-titan-gold/20 rounded px-3 pr-10 text-titan-blue dark:text-white placeholder:text-slate-400 text-sm transition-all"
                   placeholder="Enter password"
                   type={showPassword ? "text" : "password"}
                   value={password}
@@ -168,7 +167,7 @@ export default function LoginPage() {
                   required
                 />
                 <button
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-accent dark:hover:text-university-gold"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-titan-blue dark:hover:text-titan-gold"
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                 >
@@ -179,12 +178,31 @@ export default function LoginPage() {
               </div>
             </div>
 
+            {error && (
+              <div className="bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/30 rounded p-3 flex items-start gap-2">
+                <span className="material-symbols-outlined text-red-500 text-sm mt-0.5">error</span>
+                <p className="text-red-600 dark:text-red-400 text-xs font-medium leading-tight">
+                  {error}
+                </p>
+              </div>
+            )}
+
             <button
               disabled={loading}
-              className="w-full h-12 bg-accent hover:bg-black text-university-gold font-heading text-xl uppercase tracking-widest rounded transition-all shadow-md active:scale-[0.99] flex items-center justify-center gap-3 border border-university-gold/30 disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full h-12 bg-titan-blue hover:bg-titan-blue/90 text-white font-heading text-lg uppercase tracking-widest rounded transition-all shadow-lg active:scale-[0.99] flex items-center justify-center gap-2 border border-white/10 disabled:opacity-70 disabled:cursor-not-allowed group relative overflow-hidden"
             >
-              {loading ? "Authenticating..." : "Authenticate"}
-              {!loading && <span className="material-symbols-outlined text-xl">verified_user</span>}
+              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
+              {loading ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                  <span className="text-sm">Authenticating...</span>
+                </>
+              ) : (
+                <>
+                  <span className="text-sm font-bold">Authenticate</span>
+                  <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                </>
+              )}
             </button>
           </form>
         </div>
@@ -193,13 +211,13 @@ export default function LoginPage() {
           <p className="text-slate-500 dark:text-slate-400 text-xs font-medium">
             New to the Institution?
             <a
-              className="text-accent dark:text-university-gold font-bold uppercase tracking-tighter hover:underline ml-1"
+              className="text-titan-blue dark:text-titan-gold font-bold uppercase tracking-tighter hover:underline ml-1"
               href="#"
             >
               Request Access
             </a>
           </p>
-          <div className="pt-6 border-t border-slate-200 dark:border-slate-800">
+          <div className="pt-6 border-t border-slate-200 dark:border-white/5 w-full max-w-[200px] mx-auto">
             <p className="text-[10px] text-slate-400 uppercase tracking-widest leading-loose">
               Official Information System<br />
               © Titan University 2024
@@ -207,12 +225,6 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-
-      <div className="fixed top-0 left-0 w-full h-2 bg-gradient-to-r from-accent via-university-gold to-accent"></div>
-      <div className="fixed -z-10 top-0 left-0 w-full h-full opacity-10 pointer-events-none overflow-hidden">
-        <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-university-gold rounded-full blur-[120px]"></div>
-        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-accent rounded-full blur-[100px]"></div>
-      </div>
-    </>
+    </div>
   );
 }
