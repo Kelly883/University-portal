@@ -13,10 +13,12 @@ export const authConfig = {
       const isOnAdmin = nextUrl.pathname.startsWith("/admin");
       const isOnFaculty = nextUrl.pathname.startsWith("/faculty");
       const isOnStudent = nextUrl.pathname.startsWith("/student");
+      const isSuperadminSignup = nextUrl.pathname.startsWith("/superadmin-signup");
       
       // Public routes check (login is public)
       // If user is NOT logged in and trying to access protected routes
       if (!isLoggedIn) {
+        if (isSuperadminSignup) return true;
         if (isOnDashboard || isOnSuperadmin || isOnAdmin || isOnFaculty || isOnStudent) {
           return false; // Redirect to login
         }
