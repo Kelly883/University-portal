@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, Save, X, Upload, FileText, ArrowLeft, Shield } from "lucide-react";
 import Link from "next/link";
 
-export default function CreateCourseForm({ facultyList, departmentList = [] }: { facultyList: any[], departmentList?: any[] }) {
+export default function CreateCourseForm({ facultyList, faculties = [] }: { facultyList: any[], faculties?: any[] }) {
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -21,24 +21,41 @@ export default function CreateCourseForm({ facultyList, departmentList = [] }: {
   const [formData, setFormData] = useState({
     name: "",
     code: "",
+    faculty: "", // This is now the selected faculty ID for department filtering
     department: "",
     level: "",
     price: "",
-    facultyId: "",
-    description: "", // Schema doesn't have description yet but good for UI
+    facultyId: "", // This is the assigned instructor (user)
+    description: "",
   });
+
+  const [availableDepartments, setAvailableDepartments] = useState<any[]>([]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
   const handleSelectChange = (field: string, value: string) => {
-    setFormData({ ...formData, [field]: value });
+    if (field === "faculty") {
+      // When faculty changes, update available departments
+      const selectedFaculty = faculties?.find(f => f.id === value);
+      setAvailableDepartments(selectedFaculty?.departments || []);
+      // Reset department selection
+      setFormData(prev => ({ ...prev, [field]: value, department: "" }));
+    } else {
+      setFormData({ ...formData, [field]: value });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
+    if (!formData.faculty || !formData.department) {
+        toast({ title: "Error", description: "Please select both a Faculty and a Department", variant: "destructive" });
+        setLoading(false);
+        return;
+    }
 
     try {
       const res = await fetch("/api/courses", {
@@ -197,35 +214,54 @@ export default function CreateCourseForm({ facultyList, departmentList = [] }: {
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                    <div className="grid gap-2">
-                    <Label htmlFor="department">Department</Label>
-                    <Select onValueChange={(val) => handleSelectChange("department", val)}>
+                    <Label htmlFor="faculty">Faculty (School)</Label>
+                    <Select onValueChange={(val) => handleSelectChange("faculty", val)}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select Department" />
+                        <SelectValue placeholder="Select Faculty" />
                       </SelectTrigger>
                       <SelectContent>
-                        {departmentList && departmentList.length > 0 ? (
-                          departmentList.map((dept) => (
-                            <SelectItem key={dept.id} value={dept.name}>
-                              {dept.name} ({dept.acronym})
+                        {faculties && faculties.length > 0 ? (
+                          faculties.map((fac) => (
+                            <SelectItem key={fac.id} value={fac.id}>
+                              {fac.name} ({fac.acronym})
                             </SelectItem>
                           ))
                         ) : (
-                          <>
-                            <SelectItem value="Computer Science">Computer Science</SelectItem>
-                            <SelectItem value="Engineering">Engineering</SelectItem>
-                            <SelectItem value="Business">Business</SelectItem>
-                            <SelectItem value="Arts">Arts</SelectItem>
-                          </>
+                          <SelectItem value="" disabled>No faculties available</SelectItem>
                         )}
                       </SelectContent>
                     </Select>
                   </div>
 
-                  <div className="grid gap-2">
-                    <Label htmlFor="facultyId">Assigned Faculty</Label>
+                   <div className="grid gap-2">
+                    <Label htmlFor="department">Department</Label>
+                    <Select 
+                        onValueChange={(val) => handleSelectChange("department", val)}
+                        disabled={!formData.faculty || availableDepartments.length === 0}
+                        value={formData.department}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={!formData.faculty ? "Select Faculty first" : "Select Department"} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableDepartments && availableDepartments.length > 0 ? (
+                          availableDepartments.map((dept) => (
+                            <SelectItem key={dept.id} value={dept.name}>
+                              {dept.name} ({dept.acronym})
+                            </SelectItem>
+                          ))
+                        ) : (
+                          <SelectItem value="" disabled>No departments available</SelectItem>
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="grid gap-2 md:col-span-2">
+                    <Label htmlFor="facultyId">Assigned Instructor</Label>
                     <Select onValueChange={(val) => handleSelectChange("facultyId", val)}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select Faculty" />
+                        <SelectValue placeholder="Select Instructor" />
                       </SelectTrigger>
                       <SelectContent>
                         {facultyList.map((f) => (

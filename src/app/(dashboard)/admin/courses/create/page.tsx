@@ -23,20 +23,20 @@ export default async function CreateCoursePage() {
   }
 
   // 3. Fetch Data for Form (Faculty list and Departments)
-  const [faculty, departments] = await Promise.all([
+  const [faculty, faculties] = await Promise.all([
     prisma.user.findMany({
       where: { role: "FACULTY" },
       select: { id: true, name: true, email: true },
     }),
-    prisma.department.findMany({
-      select: { id: true, name: true, acronym: true },
+    prisma.faculty.findMany({
+      include: { departments: true },
       orderBy: { name: 'asc' }
     })
   ]);
 
   return (
     <div className="container mx-auto pb-10">
-      <CreateCourseForm facultyList={faculty} departmentList={departments} />
+      <CreateCourseForm facultyList={faculty} faculties={faculties} />
     </div>
   );
 }
