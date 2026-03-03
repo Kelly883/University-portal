@@ -53,7 +53,16 @@ export function DepartmentManagement() {
   const [loading, setLoading] = useState(true);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [formData, setFormData] = useState({ name: "", acronym: "", facultyId: "" });
+  const [expandedFaculties, setExpandedFaculties] = useState<string[]>([]);
   const { toast } = useToast();
+
+  const toggleFaculty = (facultyId: string) => {
+    setExpandedFaculties(prev => 
+      prev.includes(facultyId) 
+        ? prev.filter(id => id !== facultyId)
+        : [...prev, facultyId]
+    );
+  };
 
   const fetchData = async () => {
     try {
@@ -123,51 +132,120 @@ export function DepartmentManagement() {
     }
   };
 
-  if (loading) return <Loader2 className="animate-spin" />;
+  if (loading) return (
+    <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
+      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      <p className="text-muted-foreground">Loading academic structure...</p>
+    </div>
+  );
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold tracking-tight">Departments</h2>
+      <div className="flex justify-between items-center flex-wrap gap-4">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Departments</h2>
+          <p className="text-sm text-muted-foreground">
+            Manage departments grouped by faculty.
+          </p>
+        </div>
         <Button onClick={() => setIsCreateOpen(true)}>
           <Plus className="mr-2 h-4 w-4" /> Add Department
         </Button>
       </div>
 
-      <div className="rounded-md border bg-white">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Acronym</TableHead>
-              <TableHead>Faculty</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {departments.map((dept) => (
-              <TableRow key={dept.id}>
-                <TableCell className="font-medium">{dept.name}</TableCell>
-                <TableCell>{dept.acronym}</TableCell>
-                <TableCell>
-                  <span title={dept.faculty.name}>{dept.faculty.acronym}</span>
-                </TableCell>
-                <TableCell className="text-right">
-                  <Button variant="ghost" size="sm" onClick={() => handleDelete(dept.id)}>
-                    <Trash2 className="h-4 w-4 text-red-500" />
+      <div className="grid gap-6">
+        {faculties.length === 0 ? (
+          <div className="text-center py-12 border rounded-lg bg-muted/10">
+            <h3 className="text-lg font-semibold mb-2">No Faculties Found</h3>
+            <p className="text-muted-foreground mb-4">You need to create faculties before adding departments.</p>
+            {/* Could link to Faculty tab if possible, or just inform user */}
+          </div>
+        ) : (
+          faculties.map((faculty) => {
+            const facultyDepartments = departments.filter(d => d.faculty.id === faculty.id);
+            const isExpanded = expandedFaculties.includes(faculty.id);
+
+            return (
+              <div key={faculty.id} className="border rounded-lg bg-card text-card-foreground shadow-sm overflow-hidden">
+                <div 
+                  className="flex items-center justify-between p-4 cursor-pointer hover:bg-muted/50 transition-colors"
+                  onClick={() => toggleFaculty(faculty.id)}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary font-bold">
+                      {faculty.acronym}
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-lg">{faculty.name}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {facultyDepartments.length} {facultyDepartments.length === 1 ? 'Department' : 'Departments'}
+                      </p>
+                    </div>
+                  </div>
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                    <span className={`transform transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}>
+                      ▼
+                    </span>
                   </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-            {departments.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
-                  No departments found. Create one to get started.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+                </div>
+
+                {isExpanded && (
+                  <div className="border-t bg-muted/5 p-4 animate-in slide-in-from-top-2 duration-200">
+                    {facultyDepartments.length === 0 ? (
+                      <div className="text-center py-8 text-muted-foreground italic">
+                        No departments assigned to this faculty yet.
+                        <Button 
+                          variant="link" 
+                          className="pl-2"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setFormData({ ...formData, facultyId: faculty.id });
+                            setIsCreateOpen(true);
+                          }}
+                        >
+                          Add one now
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="rounded-md border bg-white overflow-hidden">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>Name</TableHead>
+                              <TableHead>Acronym</TableHead>
+                              <TableHead className="text-right">Actions</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {facultyDepartments.map((dept) => (
+                              <TableRow key={dept.id}>
+                                <TableCell className="font-medium">{dept.name}</TableCell>
+                                <TableCell>{dept.acronym}</TableCell>
+                                <TableCell className="text-right">
+                                  <Button 
+                                    variant="ghost" 
+                                    size="sm" 
+                                    className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleDelete(dept.id);
+                                    }}
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })
+        )}
       </div>
 
       <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
