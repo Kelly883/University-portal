@@ -110,6 +110,10 @@ export function DepartmentManagement() {
       setIsCreateOpen(false);
       setFormData({ name: "", acronym: "", facultyId: "" });
       fetchData();
+      // Ensure the newly added department's faculty is expanded
+      if (!expandedFaculties.includes(formData.facultyId)) {
+        setExpandedFaculties(prev => [...prev, formData.facultyId]);
+      }
     } catch (error: any) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     }
@@ -259,7 +263,10 @@ export function DepartmentManagement() {
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
               <Label htmlFor="faculty">Faculty</Label>
-              <Select onValueChange={(val) => setFormData({ ...formData, facultyId: val })}>
+              <Select 
+                onValueChange={(val) => setFormData({ ...formData, facultyId: val })}
+                value={formData.facultyId} // Ensure value is controlled
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select Faculty" />
                 </SelectTrigger>
