@@ -2,6 +2,8 @@ import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: Request) {
   const session = await auth();
   if (!session?.user) {
@@ -12,6 +14,7 @@ export async function GET(req: Request) {
     async start(controller) {
       const encoder = new TextEncoder();
       let isStreamClosed = false;
+      let interval: NodeJS.Timeout | null = null;
 
       const safeEnqueue = (data: Uint8Array) => {
         if (isStreamClosed) return;
@@ -20,17 +23,8 @@ export async function GET(req: Request) {
         } catch (error) {
           console.error("Stream enqueue error:", error);
           isStreamClosed = true;
-        }
-      };
-
-      const safeClose = () => {
-        if (isStreamClosed) return;
-        try {
-          controller.close();
-        } catch (error) {
-          console.error("Stream close error:", error);
-        } finally {
-          isStreamClosed = true;
+          if (interval) clearInterval(interval);
+          try { controller.close(); } catch (e) {}
         }
       };
 
@@ -41,21 +35,6 @@ export async function GET(req: Request) {
         if (isStreamClosed) return;
         
         try {
-          // Find unread notifications created in the last few seconds
-          // In a real production app with high load, this polling is inefficient.
-          // Ideally use Postgres LISTEN/NOTIFY or Redis Pub/Sub.
-          // For this MVP/Serverless env, we poll for *unread* notifications.
-          // To avoid re-sending, we could track last checked timestamp.
-          
-          // However, managing state in serverless function is tricky. 
-          // Client should track 'lastId' and send it, but standard EventSource doesn't send headers easily.
-          // Simplified approach: Client fetches existing unread on load. 
-          // This stream just pings "check_new" periodically or sends actual data if we can track it.
-          
-          // Let's assume we want to push *any* unread notification that the user hasn't seen?
-          // Better: The client polling is actually more robust for serverless than this stream if we can't keep it open long.
-          // But per requirements, let's try to keep this open and check DB.
-          
           const notifications = await prisma.notification.findMany({
             where: {
               userId: session.user.id,
@@ -66,20 +45,24 @@ export async function GET(req: Request) {
 
           if (notifications.length > 0) {
             safeEnqueue(encoder.encode(`data: ${JSON.stringify(notifications)}\n\n`));
+          } else {
+             // Send a keep-alive comment to keep the connection open on some platforms
+             safeEnqueue(encoder.encode(": keep-alive\n\n"));
           }
         } catch (error) {
           console.error("SSE Error:", error);
-          safeClose();
+          // Don't close immediately on DB error, just log and retry next interval
         }
       };
 
       // Poll every 5 seconds
-      const interval = setInterval(checkNotifications, 5000);
+      interval = setInterval(checkNotifications, 5000);
 
-      // Close on client disconnect (handled by runtime usually, but good practice)
+      // Close on client disconnect
       req.signal.addEventListener("abort", () => {
-        clearInterval(interval);
-        safeClose();
+        if (interval) clearInterval(interval);
+        isStreamClosed = true;
+        try { controller.close(); } catch (e) {}
       });
     },
   });
