@@ -26,14 +26,39 @@ export const {
     }),
     Credentials({
       async authorize(credentials) {
-        const parsedCredentials = z
-          .object({ email: z.string().email(), password: z.string().min(6) })
-          .safeParse(credentials);
+        // Handle legacy email/password format
+        if (credentials.email && !credentials.identifier) {
+          credentials.identifier = credentials.email;
+          credentials.identifierType = "email";
+        }
+
+        // Validation schema for different login types
+        const loginSchema = z.object({
+          identifier: z.string(),
+          identifierType: z.enum(["email", "staffId", "matricNo"]),
+          password: z.string().min(6),
+        });
+
+        const parsedCredentials = loginSchema.safeParse(credentials);
 
         if (parsedCredentials.success) {
-          const { email, password } = parsedCredentials.data;
-          const user = await prisma.user.findUnique({ where: { email } });
-          if (!user || !user.password) return null;
+          const { identifier, identifierType, password } = parsedCredentials.data;
+          
+          let user = null;
+
+          // Find user based on identifier type
+          if (identifierType === "email") {
+            user = await prisma.user.findUnique({ where: { email: identifier } });
+          } else if (identifierType === "staffId") {
+            user = await prisma.user.findUnique({ where: { staffId: identifier } });
+          } else if (identifierType === "matricNo") {
+            user = await prisma.user.findUnique({ where: { matricNo: identifier } });
+          }
+
+          if (!user || !user.password) {
+            console.log("User not found or no password set");
+            return null;
+          }
           
           if (!user.isActive) {
             console.log("User is inactive");
