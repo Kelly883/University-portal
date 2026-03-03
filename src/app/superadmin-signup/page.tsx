@@ -17,6 +17,7 @@ export default function SuperadminSignup() {
   const [success, setSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [checkingStatus, setCheckingStatus] = useState(true);
+  const [exists, setExists] = useState(false);
 
   // Check if superadmin already exists on mount
   useEffect(() => {
@@ -26,7 +27,8 @@ export default function SuperadminSignup() {
         if (res.ok) {
           const data = await res.json();
           if (data.exists) {
-            router.push('/login');
+            setExists(true);
+            setCheckingStatus(false);
           } else {
             setCheckingStatus(false);
           }
@@ -40,6 +42,25 @@ export default function SuperadminSignup() {
     };
     checkStatus();
   }, [router]);
+
+  const handleReset = async () => {
+    if (!confirm('Are you sure you want to reset the superadmin account? This action cannot be undone and will delete all existing superadmin accounts.')) return;
+    
+    try {
+        setLoading(true);
+        const res = await fetch('/api/superadmin/register', { method: 'DELETE' });
+        if (res.ok) {
+            alert('System reset successfully. You can now create a new superadmin account.');
+            window.location.reload();
+        } else {
+            alert('Failed to reset system.');
+            setLoading(false);
+        }
+    } catch (e) {
+        alert('An error occurred.');
+        setLoading(false);
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -110,6 +131,49 @@ export default function SuperadminSignup() {
           <p className="text-titan-blue dark:text-titan-gold font-heading uppercase tracking-widest text-sm animate-pulse">
             Verifying System Status...
           </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (exists) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center bg-background-light dark:bg-background-dark p-4">
+        <div className="w-full max-w-[420px] bg-white dark:bg-[#161B22] p-8 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-slate-200 dark:border-white/5 text-center">
+            <div className="w-20 h-20 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span className="material-symbols-outlined text-4xl">warning</span>
+            </div>
+            <h1 className="text-2xl font-bold text-titan-blue dark:text-white mb-4">Superadmin Already Exists</h1>
+            <p className="text-slate-600 dark:text-slate-400 mb-8">
+                A superadmin account has already been created for this system.
+                For security reasons, multiple superadmin accounts cannot be created via this page.
+            </p>
+            
+            <div className="flex flex-col gap-3">
+                <Link 
+                    href="/login" 
+                    className="w-full py-3 bg-titan-blue hover:bg-titan-blue/90 text-white rounded font-bold uppercase tracking-wide transition-colors"
+                >
+                    Log In
+                </Link>
+                
+                <div className="relative py-2">
+                    <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t border-slate-200 dark:border-white/10"></span>
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-white dark:bg-[#161B22] px-2 text-slate-400">Recovery Options</span>
+                    </div>
+                </div>
+
+                <button 
+                    onClick={handleReset}
+                    disabled={loading}
+                    className="w-full py-3 bg-white dark:bg-transparent border border-red-200 dark:border-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 rounded font-medium transition-colors text-sm"
+                >
+                    {loading ? 'Resetting...' : 'Reset System (Delete Superadmin)'}
+                </button>
+            </div>
         </div>
       </div>
     );

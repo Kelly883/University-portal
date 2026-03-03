@@ -108,6 +108,18 @@ export async function POST(request: Request) {
   }
 }
 
+export async function DELETE() {
+  try {
+    await prisma.user.deleteMany({
+      where: { role: 'SUPERADMIN' },
+    });
+    return NextResponse.json({ message: 'System reset successfully' }, { status: 200 });
+  } catch (error) {
+    console.error('Error resetting system:', error);
+    return NextResponse.json({ message: 'Failed to reset system' }, { status: 500 });
+  }
+}
+
 export async function GET() {
   try {
     const existingSuperadmin = await prisma.user.findFirst({
@@ -127,3 +139,4 @@ export async function GET() {
     );
   }
 }
+
