@@ -110,9 +110,30 @@ export async function POST(request: Request) {
 
 export async function DELETE() {
   try {
-    await prisma.user.deleteMany({
+    const superadmins = await prisma.user.findMany({
       where: { role: 'SUPERADMIN' },
+      select: { id: true }
     });
+    
+    const superadminIds = superadmins.map(u => u.id);
+
+    if (superadminIds.length > 0) {
+      // Delete related AuditLogs first
+      await prisma.auditLog.deleteMany({
+        where: { 
+          OR: [
+            { performerId: { in: superadminIds } },
+            { targetUserId: { in: superadminIds } }
+          ]
+        }
+      });
+
+      // Delete the superadmins
+      await prisma.user.deleteMany({
+        where: { id: { in: superadminIds } },
+      });
+    }
+
     return NextResponse.json({ message: 'System reset successfully' }, { status: 200 });
   } catch (error) {
     console.error('Error resetting system:', error);
