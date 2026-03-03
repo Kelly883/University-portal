@@ -81,6 +81,7 @@ export async function POST(request: Request) {
         email,
         password: hashedPassword,
         role: 'SUPERADMIN',
+        isActive: true, // Explicitly set isActive to true
       },
     });
 
