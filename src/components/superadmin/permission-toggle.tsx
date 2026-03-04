@@ -4,7 +4,7 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { toggleAdmissionPermission } from "@/actions/permissions";
 import { useTransition } from "react";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 
 interface PermissionToggleProps {
   adminId: string;
