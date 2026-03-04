@@ -31,6 +31,7 @@ enum Permission {
   DELETE_ADMIN
   MANAGE_ADMISSIONS
   VIEW_ADMISSION_DASHBOARD
+  MANAGE_FEES
 }
 
 enum ApprovalStatus {
@@ -85,6 +86,25 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model FeeStructure {
+  id          String   @id @default(cuid())
+  name        String   // e.g., "Acceptance Fee", "School Fees"
+  amount      Float
+  level       String   // e.g., "100", "200", "ALL"
+  currency    String   @default("NGN")
+  priority    Int      // 1 = Must pay first, 2 = Second, etc.
+  dueDate     DateTime?
+  
+  isActive    Boolean  @default(true)
+  
+  // Relationship for academic year or session could be added later
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([name, level])
 }
 
 model AuditLog {

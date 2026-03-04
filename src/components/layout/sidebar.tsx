@@ -52,6 +52,7 @@ export function Sidebar({ role, permissions = [], onClose }: SidebarProps & { on
       { href: "/superadmin/admins", label: "Admins", icon: Users },
       { href: "/superadmin/faculties", label: "Academics", icon: GraduationCap },
       { href: "/admin/courses", label: "Courses", icon: BookOpen },
+      { href: "/superadmin/fees", label: "Fee Structures", icon: CreditCard },
       { href: "/superadmin/audit", label: "Audit Logs", icon: FileText },
     ],
     ADMIN: adminLinks,
