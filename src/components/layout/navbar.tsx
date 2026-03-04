@@ -67,7 +67,7 @@ export function Navbar({ role }: { role?: string }) {
           />
           
           {/* Sidebar Panel */}
-          <div className="relative w-[280px] h-full bg-white dark:bg-[#0D1117] shadow-2xl animate-in slide-in-from-left duration-300">
+          <div className="relative w-[280px] h-full bg-[#0D1117] shadow-2xl animate-in slide-in-from-left duration-300">
             <Sidebar 
               role={role as any} 
               onClose={() => setIsMobileMenuOpen(false)} 

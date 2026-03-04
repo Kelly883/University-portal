@@ -78,9 +78,11 @@ export function Sidebar({ role, permissions = [], onClose }: SidebarProps & { on
         <div className="w-8 h-8 bg-titan-gold rounded-lg flex items-center justify-center text-titan-blue font-bold">
           T
         </div>
-        <span className="font-heading font-bold text-lg text-white uppercase tracking-wider">
-          Titan Univ
-        </span>
+        {role !== "SUPERADMIN" && (
+          <span className="font-heading font-bold text-lg text-white uppercase tracking-wider">
+            Titan Univ
+          </span>
+        )}
       </div>
 
       <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
