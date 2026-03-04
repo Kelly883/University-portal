@@ -29,6 +29,8 @@ enum Permission {
   CREATE_ADMIN
   EDIT_ADMIN
   DELETE_ADMIN
+  MANAGE_ADMISSIONS
+  VIEW_ADMISSION_DASHBOARD
 }
 
 enum ApprovalStatus {
@@ -143,6 +145,7 @@ model Course {
   department String?
   level     String?  // e.g. "100", "200"
   price     Float    @default(0.0) // Course-specific fee if applicable
+  credits   Int      @default(3)   // Course credit units
   
   facultyId String
   faculty   User     @relation("FacultyCourses", fields: [facultyId], references: [id])
@@ -241,4 +244,32 @@ model Department {
   updatedAt DateTime @updatedAt
 
   @@unique([facultyId, acronym])
+}
+
+model Admission {
+  id        String   @id @default(cuid())
+  trackingId String  @unique // Unique ID for applicant to track
+  firstName String
+  lastName  String
+  email     String
+  phone     String
+  dateOfBirth DateTime
+  gender    String
+  address   String
+  state     String
+  country   String
+
+  previousSchool String
+  previousGrade  String
+  transcriptUrl  String? // Base64 string or URL
+  
+  program   String // e.g. "Computer Science"
+  
+  emergencyContactName String
+  emergencyContactPhone String
+  emergencyContactRelation String
+  
+  status    ApprovalStatus @default(PENDING)
+  submittedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

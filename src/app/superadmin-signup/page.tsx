@@ -227,7 +227,7 @@ export default function SuperadminSignup() {
             <form className="space-y-4" onSubmit={handleSubmit}>
               <div className="space-y-4">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-titan-blue dark:text-slate-300 text-[10px] font-bold uppercase tracking-wider">
+                  <label htmlFor="name" className="text-titan-blue dark:text-slate-300 text-[10px] font-bold uppercase tracking-wider">
                     Full Name
                   </label>
                   <input
@@ -236,7 +236,7 @@ export default function SuperadminSignup() {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full h-10 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 focus:border-titan-gold focus:ring-1 focus:ring-titan-gold/20 rounded px-3 text-titan-blue dark:text-white placeholder:text-slate-400 text-sm transition-all"
+                    className="w-full h-12 sm:h-10 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 focus:border-titan-gold focus:ring-1 focus:ring-titan-gold/20 rounded px-3 text-titan-blue dark:text-white placeholder:text-slate-400 text-base sm:text-sm transition-all"
                     placeholder="Enter full name"
                     disabled={loading}
                     required
@@ -244,7 +244,7 @@ export default function SuperadminSignup() {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-titan-blue dark:text-slate-300 text-[10px] font-bold uppercase tracking-wider">
+                  <label htmlFor="email" className="text-titan-blue dark:text-slate-300 text-[10px] font-bold uppercase tracking-wider">
                     Email Address
                   </label>
                   <input
@@ -253,7 +253,7 @@ export default function SuperadminSignup() {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full h-10 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 focus:border-titan-gold focus:ring-1 focus:ring-titan-gold/20 rounded px-3 text-titan-blue dark:text-white placeholder:text-slate-400 text-sm transition-all"
+                    className="w-full h-12 sm:h-10 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 focus:border-titan-gold focus:ring-1 focus:ring-titan-gold/20 rounded px-3 text-titan-blue dark:text-white placeholder:text-slate-400 text-base sm:text-sm transition-all"
                     placeholder="superadmin@titan.edu"
                     disabled={loading}
                     required
@@ -261,7 +261,7 @@ export default function SuperadminSignup() {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-titan-blue dark:text-slate-300 text-[10px] font-bold uppercase tracking-wider">
+                  <label htmlFor="password" className="text-titan-blue dark:text-slate-300 text-[10px] font-bold uppercase tracking-wider">
                     Password
                   </label>
                   <div className="relative">
@@ -271,17 +271,18 @@ export default function SuperadminSignup() {
                       name="password"
                       value={formData.password}
                       onChange={handleChange}
-                      className="w-full h-10 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 focus:border-titan-gold focus:ring-1 focus:ring-titan-gold/20 rounded px-3 pr-10 text-titan-blue dark:text-white placeholder:text-slate-400 text-sm transition-all"
+                      className="w-full h-12 sm:h-10 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 focus:border-titan-gold focus:ring-1 focus:ring-titan-gold/20 rounded px-3 pr-10 text-titan-blue dark:text-white placeholder:text-slate-400 text-base sm:text-sm transition-all"
                       placeholder="Min. 8 characters"
                       disabled={loading}
                       required
                     />
                     <button
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-titan-blue dark:hover:text-titan-gold"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-titan-blue dark:hover:text-titan-gold p-2"
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? "Hide password" : "Show password"}
                     >
-                      <span className="material-symbols-outlined text-lg">
+                      <span className="material-symbols-outlined text-xl sm:text-lg">
                         {showPassword ? "visibility_off" : "visibility"}
                       </span>
                     </button>
@@ -289,7 +290,7 @@ export default function SuperadminSignup() {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-titan-blue dark:text-slate-300 text-[10px] font-bold uppercase tracking-wider">
+                  <label htmlFor="confirmPassword" className="text-titan-blue dark:text-slate-300 text-[10px] font-bold uppercase tracking-wider">
                     Confirm Password
                   </label>
                   <div className="relative">
@@ -299,7 +300,7 @@ export default function SuperadminSignup() {
                       name="confirmPassword"
                       value={formData.confirmPassword}
                       onChange={handleChange}
-                      className="w-full h-10 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 focus:border-titan-gold focus:ring-1 focus:ring-titan-gold/20 rounded px-3 pr-10 text-titan-blue dark:text-white placeholder:text-slate-400 text-sm transition-all"
+                      className="w-full h-12 sm:h-10 bg-slate-50 dark:bg-black/20 border border-slate-200 dark:border-white/10 focus:border-titan-gold focus:ring-1 focus:ring-titan-gold/20 rounded px-3 pr-10 text-titan-blue dark:text-white placeholder:text-slate-400 text-base sm:text-sm transition-all"
                       placeholder="Confirm password"
                       disabled={loading}
                       required

@@ -18,6 +18,28 @@ export const {
   adapter: PrismaAdapter(prisma) as any,
   session: { strategy: "jwt" },
   trustHost: true,
+  callbacks: {
+    ...authConfig.callbacks,
+    async jwt({ token, user }) {
+      if (user) {
+        token.role = user.role;
+        token.id = user.id;
+        token.isActive = (user as any).isActive;
+        
+        // Fetch assigned permissions from DB
+        const assignedPermissions = await prisma.adminPermission.findMany({
+          where: { adminId: user.id },
+          select: { permission: true },
+        });
+        
+        const dbPermissions = (user as any).permissions || [];
+        const extraPermissions = assignedPermissions.map(p => p.permission);
+        
+        token.permissions = [...dbPermissions, ...extraPermissions];
+      }
+      return token;
+    },
+  },
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID,

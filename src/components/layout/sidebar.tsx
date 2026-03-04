@@ -36,6 +36,16 @@ export function Sidebar({ role, permissions = [], onClose }: SidebarProps & { on
     adminLinks.splice(2, 0, { href: "/admin/courses", label: "Courses", icon: BookOpen });
   }
 
+  // Add Admissions Link
+  if (permissions.includes("MANAGE_ADMISSIONS") || role === "SUPERADMIN") {
+    adminLinks.push({ href: "/admin/admissions", label: "Admissions", icon: FileText });
+  }
+
+  // Add Superadmin Access Link (for authorized admins)
+  if (permissions.includes("VIEW_ADMISSION_DASHBOARD")) {
+    adminLinks.push({ href: "/superadmin", label: "Superadmin Access", icon: ShieldCheck });
+  }
+
   const links = {
     SUPERADMIN: [
       { href: "/superadmin", label: "Dashboard", icon: LayoutDashboard, exact: true },

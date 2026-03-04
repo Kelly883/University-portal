@@ -27,6 +27,7 @@ export default function CreateCourseForm({ facultyList, faculties = [] }: { facu
     price: "",
     facultyId: "", // This is the assigned instructor (user)
     description: "",
+    credits: "3", // Default credit unit
   });
 
   const [availableDepartments, setAvailableDepartments] = useState<any[]>([]);
@@ -64,6 +65,7 @@ export default function CreateCourseForm({ facultyList, faculties = [] }: { facu
         body: JSON.stringify({
           ...formData,
           price: parseFloat(formData.price) || 0,
+          credits: parseInt(formData.credits) || 3,
         }),
       });
 
@@ -192,6 +194,21 @@ export default function CreateCourseForm({ facultyList, faculties = [] }: { facu
                       </SelectContent>
                     </Select>
                   </div>
+                </div>
+
+                <div className="grid gap-2">
+                  <Label htmlFor="credits">Course Credit Units</Label>
+                  <Input
+                    id="credits"
+                    type="number"
+                    min="1"
+                    max="6"
+                    placeholder="e.g. 3"
+                    value={formData.credits}
+                    onChange={handleChange}
+                    className="h-11 sm:h-10 text-base sm:text-sm"
+                  />
+                  <p className="text-xs text-muted-foreground">Standard courses are typically 3 credits (Range: 1-6).</p>
                 </div>
 
                 <div className="grid gap-2">
