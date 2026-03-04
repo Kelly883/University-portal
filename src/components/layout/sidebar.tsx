@@ -73,17 +73,17 @@ export function Sidebar({ role, permissions = [], onClose }: SidebarProps & { on
   const currentLinks = links[role] || [];
 
   return (
-    <aside className="w-full h-full bg-white dark:bg-[#0D1117] flex flex-col border-r border-slate-200 dark:border-slate-800">
-      <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center gap-3">
+    <aside className="w-full h-full bg-[#0D1117] flex flex-col border-r border-slate-800">
+      <div className="p-6 border-b border-slate-800 flex items-center gap-3">
         <div className="w-8 h-8 bg-titan-gold rounded-lg flex items-center justify-center text-titan-blue font-bold">
           T
         </div>
-        <span className="font-heading font-bold text-lg text-titan-blue dark:text-white uppercase tracking-wider">
+        <span className="font-heading font-bold text-lg text-white uppercase tracking-wider">
           Titan Univ
         </span>
       </div>
 
-      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
         {currentLinks.map((link) => {
           const Icon = link.icon;
           // Improved active state logic
@@ -97,28 +97,25 @@ export function Sidebar({ role, permissions = [], onClose }: SidebarProps & { on
               href={link.href}
               onClick={onClose}
               className={cn(
-                "flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-display text-sm relative group",
+                "flex items-center gap-3 px-4 py-3 rounded-md transition-all font-display text-sm relative group",
                 isActive
-                  ? "bg-titan-blue/5 dark:bg-white/10 text-titan-blue dark:text-titan-gold font-bold shadow-sm"
-                  : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-slate-200"
+                  ? "bg-titan-gold text-titan-blue font-bold shadow-md"
+                  : "text-slate-400 hover:bg-white/5 hover:text-white"
               )}
             >
-              {isActive && (
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-titan-blue dark:bg-titan-gold rounded-r-full"></div>
-              )}
-              <Icon size={20} className={cn(isActive ? "text-titan-blue dark:text-titan-gold" : "text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300")} />
+              <Icon size={18} className={cn(isActive ? "text-titan-blue" : "text-slate-400 group-hover:text-white")} />
               {link.label}
             </Link>
           );
         })}
       </nav>
 
-      <div className="p-4 border-t border-slate-200 dark:border-slate-800">
+      <div className="p-4 border-t border-slate-800">
         <button
           onClick={() => signOut()}
-          className="flex items-center gap-3 px-4 py-3 w-full text-left text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 hover:text-red-600 rounded-lg transition-colors text-sm font-medium"
+          className="flex items-center gap-3 px-4 py-3 w-full text-left text-red-500 hover:bg-red-900/10 hover:text-red-600 rounded-md transition-colors text-sm font-medium"
         >
-          <LogOut size={20} />
+          <LogOut size={18} />
           Sign Out
         </button>
       </div>
