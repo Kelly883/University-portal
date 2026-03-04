@@ -74,7 +74,7 @@ export default async function SuperAdminDashboard() {
       </div>
 
       {/* Main Actions Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Admin Management */}
         <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-blue-500">
           <CardHeader>
@@ -92,6 +92,28 @@ export default async function SuperAdminDashboard() {
               className="inline-flex items-center justify-center w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-md text-sm font-medium transition-colors touch-manipulation min-h-[44px]"
             >
               Manage Admins
+            </Link>
+          </CardContent>
+        </Card>
+
+        {/* Admission Form */}
+        <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-green-500">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <FileText className="h-5 w-5 text-green-600" />
+              Admission Form
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              Direct access to the public admission application form for testing or review.
+            </p>
+            <Link
+              href="/admissions/apply"
+              target="_blank"
+              className="inline-flex items-center justify-center w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-md text-sm font-medium transition-colors touch-manipulation min-h-[44px]"
+            >
+              Go to Admission Form
             </Link>
           </CardContent>
         </Card>
