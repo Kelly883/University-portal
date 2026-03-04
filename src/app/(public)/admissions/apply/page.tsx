@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,6 +16,8 @@ export default function AdmissionFormPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState<{ trackingId: string } | null>(null);
+  const [programs, setPrograms] = useState<{ id: string; name: string }[]>([]);
+  const [loadingPrograms, setLoadingPrograms] = useState(true);
   
   const [formData, setFormData] = useState({
     firstName: "",
@@ -35,6 +37,25 @@ export default function AdmissionFormPage() {
     emergencyContactPhone: "",
     emergencyContactRelation: "",
   });
+
+  useEffect(() => {
+    async function fetchPrograms() {
+      try {
+        const res = await fetch("/api/admissions/programs");
+        if (res.ok) {
+          const data = await res.json();
+          setPrograms(data);
+        } else {
+            console.error("Failed to fetch programs");
+        }
+      } catch (error) {
+        console.error("Error fetching programs:", error);
+      } finally {
+        setLoadingPrograms(false);
+      }
+    }
+    fetchPrograms();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -213,15 +234,21 @@ export default function AdmissionFormPage() {
                 <div className="space-y-2">
                   <Label htmlFor="program">Intended Program</Label>
                   <Select onValueChange={(val) => handleSelectChange("program", val)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Program" />
+                    <SelectTrigger disabled={loadingPrograms}>
+                      <SelectValue placeholder={loadingPrograms ? "Loading programs..." : "Select Program"} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Computer Science">Computer Science</SelectItem>
-                      <SelectItem value="Engineering">Engineering</SelectItem>
-                      <SelectItem value="Business Administration">Business Administration</SelectItem>
-                      <SelectItem value="Medicine">Medicine</SelectItem>
-                      <SelectItem value="Law">Law</SelectItem>
+                      {programs.length > 0 ? (
+                        programs.map((prog) => (
+                          <SelectItem key={prog.id} value={prog.name}>
+                            {prog.name}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <SelectItem value="none" disabled>
+                          No programs available
+                        </SelectItem>
+                      )}
                     </SelectContent>
                   </Select>
                 </div>

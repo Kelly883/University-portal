@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { Sidebar } from "./sidebar";
 
-export function Navbar({ role }: { role?: string }) {
+export function Navbar({ role, permissions }: { role?: string, permissions?: string[] }) {
   const { data: session } = useSession();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -70,6 +70,7 @@ export function Navbar({ role }: { role?: string }) {
           <div className="relative w-[280px] h-full bg-[#0D1117] shadow-2xl animate-in slide-in-from-left duration-300">
             <Sidebar 
               role={role as any} 
+              permissions={permissions}
               onClose={() => setIsMobileMenuOpen(false)} 
             />
           </div>
