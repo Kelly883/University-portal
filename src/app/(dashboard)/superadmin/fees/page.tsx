@@ -156,7 +156,7 @@ export default function FeesPage() {
                 </div>
               </div>
 
-              <Button type="submit" className="w-full bg-titan-blue hover:bg-titan-blue/90" disabled={submitting}>
+              <Button type="submit" className="w-full bg-titan-blue hover:bg-titan-blue/90 text-white" disabled={submitting}>
                 {submitting ? <Loader2 className="animate-spin mr-2" /> : <Plus className="mr-2 h-4 w-4" />}
                 Create Fee
               </Button>

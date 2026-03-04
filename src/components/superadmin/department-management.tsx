@@ -152,7 +152,7 @@ export function DepartmentManagement() {
             Manage departments grouped by faculty.
           </p>
         </div>
-        <Button onClick={() => setIsCreateOpen(true)}>
+        <Button onClick={() => setIsCreateOpen(true)} className="text-white">
           <Plus className="mr-2 h-4 w-4" /> Add Department
         </Button>
       </div>
@@ -299,7 +299,7 @@ export function DepartmentManagement() {
             </div>
           </div>
           <DialogFooter>
-            <Button onClick={handleCreate}>Create Department</Button>
+            <Button onClick={handleCreate} className="text-white">Create Department</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

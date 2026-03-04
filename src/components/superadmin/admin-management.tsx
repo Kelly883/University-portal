@@ -168,7 +168,7 @@ export function AdminManagement() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-bold tracking-tight">Admin Management</h2>
-        <Button onClick={() => setIsCreateOpen(true)}>
+        <Button onClick={() => setIsCreateOpen(true)} className="text-white">
           <Plus className="mr-2 h-4 w-4" /> Create Admin
         </Button>
       </div>
@@ -280,7 +280,7 @@ export function AdminManagement() {
             </div>
           </div>
           <DialogFooter>
-            <Button onClick={handleCreate}>Create Admin</Button>
+            <Button onClick={handleCreate} className="text-white">Create Admin</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -311,7 +311,7 @@ export function AdminManagement() {
             </div>
           </div>
           <DialogFooter>
-            <Button onClick={handleUpdate}>Save Changes</Button>
+            <Button onClick={handleUpdate} className="text-white">Save Changes</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

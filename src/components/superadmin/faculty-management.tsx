@@ -108,7 +108,7 @@ export function FacultyManagement() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold tracking-tight">Faculties</h2>
-        <Button onClick={() => setIsCreateOpen(true)}>
+        <Button onClick={() => setIsCreateOpen(true)} className="text-white">
           <Plus className="mr-2 h-4 w-4" /> Add Faculty
         </Button>
       </div>
@@ -176,7 +176,7 @@ export function FacultyManagement() {
             </div>
           </div>
           <DialogFooter>
-            <Button onClick={handleCreate}>Create Faculty</Button>
+            <Button onClick={handleCreate} className="text-white">Create Faculty</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
