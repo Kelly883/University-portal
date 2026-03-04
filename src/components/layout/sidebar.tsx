@@ -75,9 +75,11 @@ export function Sidebar({ role, permissions = [], onClose }: SidebarProps & { on
   return (
     <aside className="w-full h-full bg-[#0D1117] flex flex-col border-r border-slate-800">
       <div className="p-6 border-b border-slate-800 flex items-center gap-3">
-        <div className="w-8 h-8 bg-titan-gold rounded-lg flex items-center justify-center text-titan-blue font-bold">
-          T
-        </div>
+        {role !== "SUPERADMIN" && (
+          <div className="w-8 h-8 bg-titan-gold rounded-lg flex items-center justify-center text-titan-blue font-bold">
+            T
+          </div>
+        )}
         {role !== "SUPERADMIN" && (
           <span className="font-heading font-bold text-lg text-white uppercase tracking-wider">
             Titan Univ
