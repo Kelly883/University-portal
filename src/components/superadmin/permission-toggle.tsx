@@ -4,7 +4,7 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { toggleAdmissionPermission } from "@/actions/permissions";
 import { useTransition } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "@/components/ui/use-toast";
 
 interface PermissionToggleProps {
   adminId: string;
@@ -14,7 +14,6 @@ interface PermissionToggleProps {
 
 export function PermissionToggle({ adminId, initialState, permission }: PermissionToggleProps) {
   const [isPending, startTransition] = useTransition();
-  const { toast } = useToast();
 
   const handleToggle = (checked: boolean) => {
     startTransition(async () => {
