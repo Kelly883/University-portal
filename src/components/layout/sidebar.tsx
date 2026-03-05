@@ -11,7 +11,9 @@ import {
   CreditCard, 
   LogOut,
   ShieldCheck,
-  FileText
+  FileText,
+  Bell,
+  User as UserIcon
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 
@@ -63,10 +65,12 @@ export function Sidebar({ role, permissions = [], onClose }: SidebarProps & { on
       { href: "/faculty/grading", label: "Grading", icon: ShieldCheck },
     ],
     STUDENT: [
-      { href: "/student", label: "Dashboard", icon: LayoutDashboard, exact: true },
+      { href: "/student", label: "Dashboard", icon: LayoutDashboard },
       { href: "/student/courses", label: "My Courses", icon: BookOpen },
       { href: "/student/grades", label: "Grades", icon: GraduationCap },
       { href: "/student/payments", label: "Payments", icon: CreditCard },
+      { href: "/student/notifications", label: "Notifications", icon: Bell },
+      { href: "/student/profile", label: "Profile", icon: UserIcon },
     ],
   };
 
