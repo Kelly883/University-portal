@@ -24,13 +24,13 @@ export default async function StudentProfilePage() {
   if (!user) redirect("/login");
 
   // Try to fetch admission details for extra info
-  const admission = await prisma.admission.findFirst({
+  const admission = user.email ? await prisma.admission.findFirst({
     where: { 
       email: user.email,
       status: 'APPROVED'
     },
     orderBy: { updatedAt: 'desc' }
-  });
+  }) : null;
 
   return (
     <div className="space-y-6 p-6">
