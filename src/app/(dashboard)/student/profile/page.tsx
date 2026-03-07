@@ -26,7 +26,7 @@ export default async function StudentProfilePage() {
   // Try to fetch admission details for extra info
   const admission = user.email ? await prisma.admission.findFirst({
     where: { 
-      email: user.email,
+      email: user.email!,
       status: 'APPROVED'
     },
     orderBy: { updatedAt: 'desc' }
