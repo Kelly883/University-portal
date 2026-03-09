@@ -55,7 +55,7 @@ export const authConfig = {
         session.user.id = token.id as string;
         (session.user as any).permissions = token.permissions;
         (session.user as any).isActive = token.isActive;
-        session.user.matricNo = token.matricNo;
+        session.user.matricNo = token.matricNo as string | undefined;
       }
       return session;
     },

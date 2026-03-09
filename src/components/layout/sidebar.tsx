@@ -65,7 +65,7 @@ export function Sidebar({ role, permissions = [], onClose }: SidebarProps & { on
       { href: "/faculty/grading", label: "Grading", icon: ShieldCheck },
     ],
     STUDENT: [
-      { href: "/student", label: "Dashboard", icon: LayoutDashboard },
+      { href: "/student", label: "Dashboard", icon: LayoutDashboard, exact: true },
       { href: "/student/courses", label: "My Courses", icon: BookOpen },
       { href: "/student/grades", label: "Grades", icon: GraduationCap },
       { href: "/student/payments", label: "Payments", icon: CreditCard },
@@ -74,7 +74,7 @@ export function Sidebar({ role, permissions = [], onClose }: SidebarProps & { on
     ],
   };
 
-  const currentLinks = links[role] || [];
+  const currentLinks: any[] = links[role] || [];
 
   return (
     <aside className="w-full h-full bg-[#0D1117] flex flex-col border-r border-slate-800">
