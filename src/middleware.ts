@@ -1,15 +1,14 @@
 
 import NextAuth from "next-auth";
-import { authConfig } from "./auth.config";
+import { authConfig } from "@/auth.config";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 const { auth } = NextAuth(authConfig);
 
-// Simple in-memory store for rate limiting
-// Note: In a serverless environment (e.g. Vercel), this state is not shared.
-// For production, use Redis (e.g. @upstash/ratelimit).
-const rateLimitMap = new Map();
+// Simple in-memory store for rate limiting (Note: In production with multiple instances, use Redis)
+// Using Map<string, { count: number, resetTime: number }>
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
 
 interface RateLimitConfig {
   limit: number;
@@ -19,7 +18,7 @@ interface RateLimitConfig {
 const RATE_LIMITS: Record<string, RateLimitConfig> = {
   "default": { limit: 100, windowMs: 60 * 1000 }, // 100 req per minute
   "auth": { limit: 5, windowMs: 15 * 60 * 1000 }, // 5 req per 15 minutes
-  "admission": { limit: 5, windowMs: 15 * 60 * 1000 }, // 5 req per 15 minutes
+  "admission": { limit: 3, windowMs: 60 * 60 * 1000 }, // 3 req per hour
 };
 
 function getRateLimitConfig(pathname: string): RateLimitConfig {
@@ -37,7 +36,7 @@ function getRateLimitConfig(pathname: string): RateLimitConfig {
 
 function checkRateLimit(ip: string, config: RateLimitConfig) {
   const now = Date.now();
-  const key = `${ip}`;
+  const key = `${ip}:${config.limit}:${config.windowMs}`; // Unique bucket per config
   
   // Clean up old entries periodically or check on access
   // Ideally use a proper cache with TTL
@@ -82,7 +81,7 @@ export default auth((req) => {
         status: 429,
         headers: {
           "Content-Type": "application/json",
-          "X-RateLimit-Limit": result.limit.toString(),
+          "X-RateLimit-Limit": config.limit.toString(),
           "X-RateLimit-Remaining": result.remaining.toString(),
           "X-RateLimit-Reset": result.reset.toString(),
         },
@@ -106,9 +105,6 @@ export default auth((req) => {
   } else if (isLoggedIn) {
     // Redirect logged-in users away from login/register pages
     if (nextUrl.pathname === "/login" || nextUrl.pathname === "/register") {
-       // Check role to redirect correctly
-       // Note: req.auth.user might not have role populated if not in session callback
-       // Default to /dashboard if role unknown, or just let them be if complex logic needed
        return Response.redirect(new URL("/dashboard", nextUrl));
     }
   }

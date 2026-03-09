@@ -19,6 +19,8 @@ export default function UndergraduateAdmissionForm() {
   const [programs, setPrograms] = useState<{ id: string; name: string }[]>([]);
   const [loadingPrograms, setLoadingPrograms] = useState(true);
   
+  const [showPassword, setShowPassword] = useState(false);
+  
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -33,6 +35,7 @@ export default function UndergraduateAdmissionForm() {
     previousGrade: "",
     transcriptUrl: "", // Base64 string
     program: "",
+    password: "",
     emergencyContactName: "",
     emergencyContactPhone: "",
     emergencyContactRelation: "",
@@ -281,12 +284,12 @@ export default function UndergraduateAdmissionForm() {
                             <Input id="previousSchool" value={formData.previousSchool} onChange={handleChange} required placeholder="e.g. Central High School" />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="previousGrade">GPA / Final Grade</Label>
-                            <Input id="previousGrade" value={formData.previousGrade} onChange={handleChange} required placeholder="e.g. 3.8/4.0" />
+                            <Label htmlFor="previousGrade">SSCE/WAEC/NECO Grade</Label>
+                            <Input id="previousGrade" value={formData.previousGrade} onChange={handleChange} required placeholder="e.g. 5 Credits including Maths & English" />
                         </div>
                         </div>
                         <div className="space-y-2">
-                        <Label htmlFor="transcript">Upload High School Transcript (PDF/Image, Max 2MB)</Label>
+                        <Label htmlFor="transcript">Upload O'Level Result (PDF/Image, Max 2MB)</Label>
                         <div className="flex items-center gap-4 border border-dashed border-slate-300 p-4 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors">
                             <Input id="transcript" type="file" accept=".pdf,.jpg,.png,.jpeg" onChange={handleFileChange} className="cursor-pointer border-none bg-transparent shadow-none p-0 h-auto" />
                             {formData.transcriptUrl && <CheckCircle className="text-green-500 w-6 h-6 flex-shrink-0" />}
@@ -297,8 +300,9 @@ export default function UndergraduateAdmissionForm() {
                     {/* Program Selection */}
                     <div className="space-y-4">
                         <h3 className="text-lg font-semibold text-slate-800 border-b pb-2 flex items-center gap-2">
-                            <span className="material-symbols-outlined text-blue-600">bookmark</span> Program Selection
+                            <span className="material-symbols-outlined text-blue-600">bookmark</span> Program Selection & Account
                         </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                         <Label htmlFor="program">Intended Undergraduate Program</Label>
                         <Select onValueChange={(val) => handleSelectChange("program", val)}>
@@ -319,6 +323,31 @@ export default function UndergraduateAdmissionForm() {
                             )}
                             </SelectContent>
                         </Select>
+                        </div>
+                        <div className="space-y-2 relative">
+                            <Label htmlFor="password">Create Password</Label>
+                            <div className="relative">
+                            <Input 
+                                id="password" 
+                                type={showPassword ? "text" : "password"} 
+                                value={formData.password} 
+                                onChange={handleChange} 
+                                required 
+                                placeholder="Min 8 chars, 1 uppercase, 1 number"
+                            />
+                            <button 
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                            >
+                                {showPassword ? (
+                                <span className="material-symbols-outlined text-sm">visibility_off</span>
+                                ) : (
+                                <span className="material-symbols-outlined text-sm">visibility</span>
+                                )}
+                            </button>
+                            </div>
+                        </div>
                         </div>
                     </div>
 

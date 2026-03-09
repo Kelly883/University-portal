@@ -36,6 +36,7 @@ export const {
         const extraPermissions = assignedPermissions.map(p => p.permission);
         
         token.permissions = [...dbPermissions, ...extraPermissions];
+        token.matricNo = user.matricNo;
       }
       return token;
     },

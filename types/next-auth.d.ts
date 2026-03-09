@@ -5,11 +5,13 @@ declare module "next-auth" {
     user: {
       role: "SUPERADMIN" | "ADMIN" | "FACULTY" | "STUDENT" | "PARENT";
       id: string;
+      matricNo?: string;
     } & DefaultSession["user"];
   }
 
   interface User {
     role: "SUPERADMIN" | "ADMIN" | "FACULTY" | "STUDENT" | "PARENT";
+    matricNo?: string;
   }
 }
 
@@ -17,5 +19,6 @@ declare module "next-auth/jwt" {
   interface JWT {
     role: "SUPERADMIN" | "ADMIN" | "FACULTY" | "STUDENT" | "PARENT";
     id: string;
+    matricNo?: string;
   }
 }

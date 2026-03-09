@@ -214,16 +214,16 @@ export default function AdmissionFormPage() {
                 <h3 className="text-lg font-semibold text-slate-800 border-b pb-2">Academic History</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="previousSchool">Previous School Name</Label>
+                    <Label htmlFor="previousSchool">High School Name</Label>
                     <Input id="previousSchool" value={formData.previousSchool} onChange={handleChange} required />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="previousGrade">Grade/GPA/Result</Label>
+                    <Label htmlFor="previousGrade">SSCE/WAEC/NECO Grade</Label>
                     <Input id="previousGrade" value={formData.previousGrade} onChange={handleChange} required />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="transcript">Upload Transcript (PDF/Image, Max 2MB)</Label>
+                  <Label htmlFor="transcript">Upload O'Level Result (PDF/Image, Max 2MB)</Label>
                   <div className="flex items-center gap-4">
                     <Input id="transcript" type="file" accept=".pdf,.jpg,.png,.jpeg" onChange={handleFileChange} className="cursor-pointer" />
                     {formData.transcriptUrl && <CheckCircle className="text-green-500 w-5 h-5" />}
