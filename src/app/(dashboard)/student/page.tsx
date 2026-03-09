@@ -66,7 +66,7 @@ export default async function StudentDashboard() {
           Welcome back, {session.user.name?.split(' ')[0]}
         </h1>
         <p className="text-slate-500 dark:text-slate-400">
-          Here's what's happening with your academic progress today.
+          Matric No: <span className="font-mono font-semibold text-slate-700 dark:text-slate-300">{session.user.matricNo || 'N/A'}</span>
         </p>
       </div>
 

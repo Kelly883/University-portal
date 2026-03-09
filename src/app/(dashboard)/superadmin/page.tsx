@@ -75,6 +75,27 @@ export default async function SuperAdminDashboard() {
 
       {/* Main Actions Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Admission Management - NEW */}
+        <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-orange-500">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <FileCheck className="h-5 w-5 text-orange-600" />
+              Admission Management
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              Review pending student applications, approve admissions, and manage rejections.
+            </p>
+            <Link
+              href="/superadmin/admissions"
+              className="inline-flex items-center justify-center w-full sm:w-auto bg-orange-600 hover:bg-orange-700 text-white px-4 py-2.5 rounded-md text-sm font-medium transition-colors touch-manipulation min-h-[44px]"
+            >
+              Manage Admissions
+            </Link>
+          </CardContent>
+        </Card>
+
         {/* Admin Management */}
         <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-blue-500">
           <CardHeader>

@@ -284,7 +284,8 @@ model Admission {
   transcriptUrl  String? // Base64 string or URL
   
   program   String // e.g. "Computer Science"
-  
+  password  String? // New field for applicant password
+
   emergencyContactName String
   emergencyContactPhone String
   emergencyContactRelation String

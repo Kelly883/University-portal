@@ -33,10 +33,13 @@ export default function AdmissionFormPage() {
     previousGrade: "",
     transcriptUrl: "", // Base64 string
     program: "",
+    password: "",
     emergencyContactName: "",
     emergencyContactPhone: "",
     emergencyContactRelation: "",
   });
+
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     async function fetchPrograms() {
@@ -230,27 +233,53 @@ export default function AdmissionFormPage() {
 
               {/* Program Selection */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-slate-800 border-b pb-2">Program Selection</h3>
-                <div className="space-y-2">
-                  <Label htmlFor="program">Intended Program</Label>
-                  <Select onValueChange={(val) => handleSelectChange("program", val)}>
-                    <SelectTrigger disabled={loadingPrograms}>
-                      <SelectValue placeholder={loadingPrograms ? "Loading programs..." : "Select Program"} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {programs.length > 0 ? (
-                        programs.map((prog) => (
-                          <SelectItem key={prog.id} value={prog.name}>
-                            {prog.name}
+                <h3 className="text-lg font-semibold text-slate-800 border-b pb-2">Program Selection & Account</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="program">Intended Program</Label>
+                    <Select onValueChange={(val) => handleSelectChange("program", val)}>
+                      <SelectTrigger disabled={loadingPrograms}>
+                        <SelectValue placeholder={loadingPrograms ? "Loading programs..." : "Select Program"} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {programs.length > 0 ? (
+                          programs.map((prog) => (
+                            <SelectItem key={prog.id} value={prog.name}>
+                              {prog.name}
+                            </SelectItem>
+                          ))
+                        ) : (
+                          <SelectItem value="none" disabled>
+                            No programs available
                           </SelectItem>
-                        ))
-                      ) : (
-                        <SelectItem value="none" disabled>
-                          No programs available
-                        </SelectItem>
-                      )}
-                    </SelectContent>
-                  </Select>
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2 relative">
+                    <Label htmlFor="password">Create Password</Label>
+                    <div className="relative">
+                      <Input 
+                        id="password" 
+                        type={showPassword ? "text" : "password"} 
+                        value={formData.password} 
+                        onChange={handleChange} 
+                        required 
+                        placeholder="Min 8 chars, 1 uppercase, 1 number"
+                      />
+                      <button 
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                      >
+                        {showPassword ? (
+                          <span className="material-symbols-outlined text-sm">visibility_off</span>
+                        ) : (
+                          <span className="material-symbols-outlined text-sm">visibility</span>
+                        )}
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
 

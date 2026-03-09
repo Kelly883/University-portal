@@ -64,13 +64,41 @@ export const {
         const parsedCredentials = loginSchema.safeParse(credentials);
 
         if (parsedCredentials.success) {
-          const { identifier, identifierType, password } = parsedCredentials.data;
-          
-          let user = null;
+            const { identifier, identifierType, password } = parsedCredentials.data;
+            
+            let user: any = null;
 
-          // Find user based on identifier type
+            // Find user based on identifier type
           if (identifierType === "email") {
-            user = await prisma.user.findUnique({ where: { email: identifier } });
+            const userByEmail = await prisma.user.findUnique({ where: { email: identifier } });
+            
+            if (userByEmail) {
+              user = userByEmail;
+          } else {
+              // Check if there is a pending admission with this email
+              const admission = await prisma.admission.findFirst({
+                  where: { email: identifier }
+              });
+
+              if (admission) {
+                  if (admission.status === 'PENDING') {
+                      // Check password for pending admission so we don't leak existence
+                      if (admission.password) {
+                          const passwordsMatch = await bcrypt.compare(password, admission.password);
+                          if (passwordsMatch) {
+                              throw new Error("Admission in progress, check in later");
+                          }
+                      }
+                  } else if (admission.status === 'REJECTED') {
+                      if (admission.password) {
+                          const passwordsMatch = await bcrypt.compare(password, admission.password);
+                          if (passwordsMatch) {
+                              throw new Error("Admission application was not successful");
+                          }
+                      }
+                  }
+              }
+          }
           } else if (identifierType === "staffId") {
             user = await prisma.user.findUnique({ where: { staffId: identifier } });
           } else if (identifierType === "matricNo") {

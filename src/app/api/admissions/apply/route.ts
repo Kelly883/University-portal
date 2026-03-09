@@ -2,6 +2,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { z } from "zod";
+import bcrypt from "bcryptjs";
 
 const admissionSchema = z.object({
   firstName: z.string().min(2, "First name is required"),
@@ -19,6 +20,11 @@ const admissionSchema = z.object({
   transcriptUrl: z.string().optional(), // Base64 string or URL
   
   program: z.string().min(2, "Program selection is required"),
+  password: z.string()
+    .min(8, "Password must be at least 8 characters")
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .regex(/[0-9]/, "Password must contain at least one number")
+    .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character"),
   
   emergencyContactName: z.string().min(2, "Emergency contact name is required"),
   emergencyContactPhone: z.string().min(10, "Emergency contact phone is required"),
@@ -45,6 +51,20 @@ export async function POST(req: Request) {
 
     const data = result.data;
 
+    // Check if email already exists in User or Admission table
+    const existingUser = await prisma.user.findUnique({ where: { email: data.email } });
+    if (existingUser) {
+      return NextResponse.json({ message: "Email already registered" }, { status: 409 });
+    }
+
+    const existingAdmission = await prisma.admission.findFirst({ where: { email: data.email } });
+    if (existingAdmission) {
+       return NextResponse.json({ message: "Application already submitted with this email" }, { status: 409 });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+
     // Generate a unique tracking ID (e.g., ADM-TIMESTAMP-RANDOM)
     const randomSuffix = Math.floor(1000 + Math.random() * 9000); // 4 digit random
     const trackingId = `ADM-${Date.now().toString().slice(-6)}-${randomSuffix}`;
@@ -52,6 +72,7 @@ export async function POST(req: Request) {
     const admission = await prisma.admission.create({
       data: {
         ...data,
+        password: hashedPassword,
         dateOfBirth: new Date(data.dateOfBirth), // Ensure Date type
         trackingId,
         status: "PENDING",
