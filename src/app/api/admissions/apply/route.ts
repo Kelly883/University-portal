@@ -79,9 +79,20 @@ export async function POST(req: Request) {
       },
     });
 
-    // Mock Email Sending (In production, use Resend/SendGrid)
-    console.log(`[EMAIL] To: ${admission.email} | Subject: Application Received`);
-    console.log(`[EMAIL] Body: Dear ${admission.firstName}, your application to Titan University has been received. Your Tracking ID is: ${trackingId}.`);
+    // Send confirmation email
+    await sendEmail({
+      to: admission.email,
+      subject: "Application Received - Titan University",
+      html: `
+        <h1>Application Received</h1>
+        <p>Dear ${admission.firstName},</p>
+        <p>Your application to Titan University has been received.</p>
+        <p><strong>Tracking ID:</strong> ${trackingId}</p>
+        <p>You can use this ID to track your admission status.</p>
+        <br/>
+        <p>Best regards,<br/>Titan University Admissions</p>
+      `,
+    });
 
     return NextResponse.json({ 
       success: true, 

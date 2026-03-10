@@ -75,7 +75,7 @@ export const {
             
             if (userByEmail) {
               user = userByEmail;
-          } else {
+            } else {
               // Check if there is a pending admission with this email
               const admission = await prisma.admission.findFirst({
                   where: { email: identifier }
@@ -87,6 +87,8 @@ export const {
                       if (admission.password) {
                           const passwordsMatch = await bcrypt.compare(password, admission.password);
                           if (passwordsMatch) {
+                              // We can't return a user object because they aren't a user yet.
+                              // Throwing an error here is caught by NextAuth and displayed to the user.
                               throw new Error("Admission in progress, check in later");
                           }
                       }
@@ -97,9 +99,19 @@ export const {
                               throw new Error("Admission application was not successful");
                           }
                       }
+                  } else if (admission.status === 'APPROVED') {
+                      // If approved but not yet a user (shouldn't happen if workflow is correct, but safe fallback)
+                      // Or if they haven't received credentials yet.
+                      // Ideally, approval creates a User record.
+                      if (admission.password) {
+                          const passwordsMatch = await bcrypt.compare(password, admission.password);
+                          if (passwordsMatch) {
+                              throw new Error("Admission approved! Please check your email for student credentials.");
+                          }
+                      }
                   }
               }
-          }
+            }
           } else if (identifierType === "staffId") {
             user = await prisma.user.findUnique({ where: { staffId: identifier } });
           } else if (identifierType === "matricNo") {
