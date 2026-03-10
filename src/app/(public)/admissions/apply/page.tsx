@@ -92,7 +92,12 @@ export default function AdmissionFormPage() {
       const res = await fetch("/api/admissions/apply", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+            ...formData,
+            // Ensure dateOfBirth is a string if it's not empty, or undefined if it is. 
+            // The API expects a string or date object that can be parsed.
+            dateOfBirth: formData.dateOfBirth ? formData.dateOfBirth : undefined, 
+        }),
       });
 
       const data = await res.json();

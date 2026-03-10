@@ -98,6 +98,7 @@ export default function UndergraduateAdmissionForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
+          dateOfBirth: formData.dateOfBirth ? formData.dateOfBirth : undefined,
           admissionType: "UNDERGRADUATE" // If we want to track this later
         }),
       });

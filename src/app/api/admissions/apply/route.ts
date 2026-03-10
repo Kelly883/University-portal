@@ -36,7 +36,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     
     // Convert date string to Date object if needed before validation/prisma
-    if (typeof body.dateOfBirth === 'string') {
+    if (typeof body.dateOfBirth === 'string' && body.dateOfBirth) {
         body.dateOfBirth = new Date(body.dateOfBirth);
     }
 
