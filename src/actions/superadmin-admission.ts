@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { sendEmail } from "@/lib/email";
+import { env } from "@/env.mjs";
 
 export async function approveAdmission(admissionId: string) {
   const session = await auth();
@@ -99,7 +100,7 @@ export async function approveAdmission(admissionId: string) {
                 <p><strong>Password:</strong> (The password you created during application)</p>
                 <br/>
                 <p>You can now login to the student portal using your Matric Number or Email.</p>
-                <a href="${process.env.NEXTAUTH_URL}/login" style="display:inline-block;padding:10px 20px;background-color:#003366;color:white;text-decoration:none;border-radius:5px;">Login to Portal</a>
+                <a href="${env.NEXTAUTH_URL}/login" style="display:inline-block;padding:10px 20px;background-color:#003366;color:white;text-decoration:none;border-radius:5px;">Login to Portal</a>
                 <br/><br/>
                 <p>Welcome to Titan University!</p>
             `,

@@ -4,7 +4,7 @@ export async function logAudit(
   action: string,
   entity: string,
   performerId: string,
-  details?: any,
+  details?: Record<string, unknown> | string | number | boolean | null,
   entityId?: string,
   targetUserId?: string
 ) {

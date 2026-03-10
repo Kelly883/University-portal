@@ -1,7 +1,8 @@
 
 import { Resend } from 'resend';
+import { env } from "@/env.mjs";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(env.RESEND_API_KEY);
 
 interface EmailPayload {
   to: string;
@@ -10,9 +11,9 @@ interface EmailPayload {
 }
 
 export const sendEmail = async (data: EmailPayload) => {
-  const sender = process.env.EMAIL_FROM || 'Titan University <onboarding@resend.dev>';
+  const sender = env.EMAIL_FROM || 'Titan University <onboarding@resend.dev>';
   
-  if (!process.env.RESEND_API_KEY) {
+  if (!env.RESEND_API_KEY) {
     console.warn("RESEND_API_KEY not found. Email simulation:");
     console.log(`To: ${data.to}`);
     console.log(`Subject: ${data.subject}`);

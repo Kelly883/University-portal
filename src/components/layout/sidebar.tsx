@@ -22,10 +22,17 @@ interface SidebarProps {
   permissions?: string[];
 }
 
+interface SidebarLink {
+  href: string;
+  label: string;
+  icon: React.ElementType;
+  exact?: boolean;
+}
+
 export function Sidebar({ role, permissions = [], onClose }: SidebarProps & { onClose?: () => void }) {
   const pathname = usePathname();
 
-  const adminLinks = [
+  const adminLinks: SidebarLink[] = [
     { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
     { href: "/admin/users", label: "Users", icon: Users },
     { href: "/admin/finance", label: "Finance", icon: CreditCard },
@@ -48,7 +55,7 @@ export function Sidebar({ role, permissions = [], onClose }: SidebarProps & { on
     adminLinks.push({ href: "/superadmin", label: "Superadmin Access", icon: ShieldCheck });
   }
 
-  const links = {
+  const links: Record<string, SidebarLink[]> = {
     SUPERADMIN: [
       { href: "/superadmin", label: "Dashboard", icon: LayoutDashboard, exact: true },
       { href: "/superadmin/admins", label: "Admins", icon: Users },
@@ -74,7 +81,7 @@ export function Sidebar({ role, permissions = [], onClose }: SidebarProps & { on
     ],
   };
 
-  const currentLinks: any[] = links[role] || [];
+  const currentLinks = links[role] || [];
 
   return (
     <aside className="w-full h-full bg-[#0D1117] flex flex-col border-r border-slate-800">

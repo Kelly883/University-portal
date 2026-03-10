@@ -1,22 +1,21 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import crypto from "crypto";
+import { env } from "@/env.mjs";
 
-const SECRET_HASH = process.env.FLUTTERWAVE_SECRET_HASH || "my_secret_hash";
+const SECRET_HASH = env.FLUTTERWAVE_SECRET_HASH;
 
 export async function POST(req: Request) {
   try {
     const signature = req.headers.get("verif-hash");
-    if (!signature || signature !== SECRET_HASH) {
-      // If we don't have a hash set in env, we might want to log a warning or skip.
-      // But for security, we should enforce it.
-      // For now, if env is not set, we might be vulnerable, so user must set it.
-      if (process.env.NODE_ENV === "production" && !process.env.FLUTTERWAVE_SECRET_HASH) {
-         console.warn("FLUTTERWAVE_SECRET_HASH not set in production");
-      }
-      if (signature !== SECRET_HASH) {
+    
+    // Only check signature if we have a secret hash configured
+    if (SECRET_HASH) {
+      if (!signature || signature !== SECRET_HASH) {
         return new NextResponse("Invalid signature", { status: 401 });
       }
+    } else if (process.env.NODE_ENV === "production") {
+        console.warn("FLUTTERWAVE_SECRET_HASH not set in production - Webhook is insecure");
     }
 
     const body = await req.json();

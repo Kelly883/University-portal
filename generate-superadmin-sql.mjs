@@ -1,7 +1,8 @@
 import bcrypt from 'bcryptjs';
 
 async function generateSuperadmin() {
-  const password = 'password123';
+  // WARNING: Change this password in production or use environment variable
+  const password = process.env.SUPERADMIN_PASSWORD || 'password123';
   const hashedPassword = await bcrypt.hash(password, 10);
   
   const sqlScript = `-- Run this SQL script directly against your Railway PostgreSQL database to create the superadmin account.

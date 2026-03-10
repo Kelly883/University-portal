@@ -8,6 +8,8 @@ import { z } from "zod";
 import prisma from "@/lib/prisma";
 import { authConfig } from "./auth.config";
 
+import { env } from "@/env.mjs";
+
 export const {
   handlers: { GET, POST },
   auth,
@@ -43,12 +45,15 @@ export const {
   },
   providers: [
     Google({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientId: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
       allowDangerousEmailAccountLinking: true,
     }),
     Credentials({
-      async authorize(credentials) {
+      authorize: async (credentials) => {
+        if (!credentials?.email || !credentials?.password) {
+          return null;
+        }
         // Handle legacy email/password format
         if (credentials.email && !credentials.identifier) {
           credentials.identifier = credentials.email;
@@ -70,8 +75,8 @@ export const {
             let user: any = null;
 
             // Find user based on identifier type
-          if (identifierType === "email") {
-            const userByEmail = await prisma.user.findUnique({ where: { email: identifier } });
+            if (identifierType === "email") {
+                const userByEmail = await prisma.user.findUnique({ where: { email: identifier } });
             
             if (userByEmail) {
               user = userByEmail;

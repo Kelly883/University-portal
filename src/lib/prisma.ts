@@ -1,7 +1,8 @@
 import { PrismaClient } from "@prisma/client";
+import { env } from "@/env.mjs";
 
 const prismaClientSingleton = () => {
-  const connectionString = process.env.DATABASE_URL || "postgresql://dummy:dummy@localhost:5432/dummy";
+  const connectionString = env.DATABASE_URL;
 
   // Use Neon serverless adapter only when connecting to a Neon database
   if (connectionString.includes("neon.tech") || connectionString.includes("neon.database")) {

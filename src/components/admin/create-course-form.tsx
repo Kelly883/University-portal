@@ -12,7 +12,26 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, Save, X, Upload, FileText, ArrowLeft, Shield } from "lucide-react";
 import Link from "next/link";
 
-export default function CreateCourseForm({ facultyList, faculties = [] }: { facultyList: any[], faculties?: any[] }) {
+interface Faculty {
+  id: string;
+  name: string | null;
+  email: string | null;
+}
+
+interface FacultyGroup {
+  id: string;
+  name: string;
+  acronym: string;
+  departments: Department[];
+}
+
+interface Department {
+  id: string;
+  name: string;
+  acronym: string;
+}
+
+export default function CreateCourseForm({ facultyList, faculties = [] }: { facultyList: Faculty[], faculties?: FacultyGroup[] }) {
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -30,7 +49,7 @@ export default function CreateCourseForm({ facultyList, faculties = [] }: { facu
     credits: "3", // Default credit unit
   });
 
-  const [availableDepartments, setAvailableDepartments] = useState<any[]>([]);
+  const [availableDepartments, setAvailableDepartments] = useState<Department[]>([]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
