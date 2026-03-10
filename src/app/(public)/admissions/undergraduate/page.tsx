@@ -32,7 +32,7 @@ export default function UndergraduateAdmissionForm() {
     state: "",
     country: "",
     previousSchool: "",
-    previousGrade: "",
+    examGrades: [{ subject: "", grade: "", examNo: "" }], // Changed from previousGrade
     transcriptUrl: "", // Base64 string
     program: "",
     password: "",
@@ -40,6 +40,26 @@ export default function UndergraduateAdmissionForm() {
     emergencyContactPhone: "",
     emergencyContactRelation: "",
   });
+
+  const WAEC_GRADES = ["A1", "B2", "B3", "C4", "C5", "C6", "D7", "E8", "F9"];
+
+  const handleGradeChange = (index: number, field: string, value: string) => {
+    const newGrades = [...formData.examGrades];
+    newGrades[index] = { ...newGrades[index], [field]: value };
+    setFormData({ ...formData, examGrades: newGrades });
+  };
+
+  const addGradeRow = () => {
+    setFormData({
+      ...formData,
+      examGrades: [...formData.examGrades, { subject: "", grade: "", examNo: "" }],
+    });
+  };
+
+  const removeGradeRow = (index: number) => {
+    const newGrades = formData.examGrades.filter((_, i) => i !== index);
+    setFormData({ ...formData, examGrades: newGrades });
+  };
 
   useEffect(() => {
     async function fetchPrograms() {
@@ -99,7 +119,8 @@ export default function UndergraduateAdmissionForm() {
         body: JSON.stringify({
           ...formData,
           dateOfBirth: formData.dateOfBirth ? formData.dateOfBirth : undefined,
-          admissionType: "UNDERGRADUATE" // If we want to track this later
+          previousGrade: JSON.stringify(formData.examGrades), // Serialize grades array to string for storage
+          admissionType: "UNDERGRADUATE" 
         }),
       });
 
@@ -279,17 +300,67 @@ export default function UndergraduateAdmissionForm() {
                         <h3 className="text-lg font-semibold text-slate-800 border-b pb-2 flex items-center gap-2">
                             <span className="material-symbols-outlined text-blue-600">school</span> Academic History
                         </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="previousSchool">High School Name</Label>
                             <Input id="previousSchool" value={formData.previousSchool} onChange={handleChange} required placeholder="e.g. Central High School" />
                         </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="previousGrade">SSCE/WAEC/NECO Grade</Label>
-                            <Input id="previousGrade" value={formData.previousGrade} onChange={handleChange} required placeholder="e.g. 5 Credits including Maths & English" />
+                        
+                        <div className="space-y-3">
+                            <Label>Examination Grades (WAEC/NECO/SSCE)</Label>
+                            {formData.examGrades.map((grade, index) => (
+                                <div key={index} className="grid grid-cols-12 gap-2 items-end bg-slate-50 p-2 rounded-md">
+                                    <div className="col-span-4">
+                                        <Label className="text-xs text-slate-500 mb-1 block">Subject</Label>
+                                        <Input 
+                                            placeholder="Subject" 
+                                            value={grade.subject} 
+                                            onChange={(e) => handleGradeChange(index, "subject", e.target.value)}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="col-span-3">
+                                        <Label className="text-xs text-slate-500 mb-1 block">Grade</Label>
+                                        <Select value={grade.grade} onValueChange={(val) => handleGradeChange(index, "grade", val)}>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Grade" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {WAEC_GRADES.map((g) => (
+                                                    <SelectItem key={g} value={g}>{g}</SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="col-span-4">
+                                        <Label className="text-xs text-slate-500 mb-1 block">Exam No</Label>
+                                        <Input 
+                                            placeholder="Exam Reg No" 
+                                            value={grade.examNo} 
+                                            onChange={(e) => handleGradeChange(index, "examNo", e.target.value)}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="col-span-1">
+                                        {formData.examGrades.length > 1 && (
+                                            <Button 
+                                                type="button" 
+                                                variant="ghost" 
+                                                size="icon" 
+                                                onClick={() => removeGradeRow(index)}
+                                                className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                            >
+                                                <span className="material-symbols-outlined">delete</span>
+                                            </Button>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                            <Button type="button" variant="outline" onClick={addGradeRow} className="w-full text-blue-600 border-blue-200 hover:bg-blue-50">
+                                <span className="material-symbols-outlined mr-2">add</span> Add Subject
+                            </Button>
                         </div>
-                        </div>
-                        <div className="space-y-2">
+
+                        <div className="space-y-2 mt-4">
                         <Label htmlFor="transcript">Upload O'Level Result (PDF/Image, Max 2MB)</Label>
                         <div className="flex items-center gap-4 border border-dashed border-slate-300 p-4 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors">
                             <Input id="transcript" type="file" accept=".pdf,.jpg,.png,.jpeg" onChange={handleFileChange} className="cursor-pointer border-none bg-transparent shadow-none p-0 h-auto" />
