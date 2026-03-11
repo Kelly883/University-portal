@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
+import { sendEmail } from "@/lib/email";
 
 const admissionSchema = z.object({
   firstName: z.string().min(2, "First name is required"),
