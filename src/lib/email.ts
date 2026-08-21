@@ -1,8 +1,5 @@
 
-import { Resend } from 'resend';
 import { env } from "@/env.mjs";
-
-const resend = new Resend(env.RESEND_API_KEY);
 
 interface EmailPayload {
   to: string;
@@ -22,6 +19,8 @@ export const sendEmail = async (data: EmailPayload) => {
   }
 
   try {
+    const { Resend } = await import('resend');
+    const resend = new Resend(env.RESEND_API_KEY);
     const { data: emailData, error } = await resend.emails.send({
       from: sender,
       to: [data.to],
@@ -38,7 +37,6 @@ export const sendEmail = async (data: EmailPayload) => {
     return emailData;
   } catch (error) {
     console.error("Error sending email:", error);
-    // In production, you might want to log this to a monitoring service (Sentry, etc.)
     throw error;
   }
 };
