@@ -129,7 +129,9 @@ export function validateCourseRegistration(
   }
 
   // 7. Prerequisites (must be already passed OR selected in this batch).
-  const satisfied = new Set<string>([...student.passedCourseIds, ...seen]);
+  const satisfied = new Set<string>();
+  student.passedCourseIds.forEach((id) => satisfied.add(id));
+  seen.forEach((id) => satisfied.add(id));
   for (const c of selected) {
     for (const prereq of c.prerequisites) {
       if (!satisfied.has(prereq)) {

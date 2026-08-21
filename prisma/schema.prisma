@@ -52,6 +52,15 @@ model User {
   role          Role      @default(STUDENT)
   isActive      Boolean   @default(true)
   lastLogin     DateTime?
+
+  // Student academic profile (optional; populated for enrolled students)
+  level         String?   // e.g. "100", "200"
+  programmeId   String?
+  programme     Programme? @relation(fields: [programmeId], references: [id])
+  departmentId  String?
+  department    Department? @relation(fields: [departmentId], references: [id])
+  facultyId     String?
+  faculty       Faculty?  @relation(fields: [facultyId], references: [id])
   
   // Permissions can be simple string array or structured relation
   permissions   String[]  @default([]) // e.g. ["users:read", "users:write"]
@@ -83,6 +92,15 @@ model User {
   // Audit Logs
   auditLogs     AuditLog[] @relation("Performer")
   targetLogs    AuditLog[] @relation("Target")
+
+  // PRD-aligned portal back-relations
+  courseRegistrations CourseRegistration[]
+  results             Result[]
+  invoices            Invoice[]
+  receipts            Receipt[]
+  announcements       Announcement[] @relation("AnnouncementAuthor")
+  news                News[]         @relation("NewsAuthor")
+  supportTickets      SupportTicket[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -250,6 +268,8 @@ model Faculty {
   name      String   @unique
   acronym   String   @unique
   departments Department[]
+  programmes Programme[]
+  users     User[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -260,6 +280,8 @@ model Department {
   acronym   String
   facultyId String
   faculty   Faculty  @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+  programmes Programme[]
+  users     User[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -293,4 +315,257 @@ model Admission {
   status    ApprovalStatus @default(PENDING)
   submittedAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// PRD-aligned core academic / portal entities (additive, non-breaking)
+// Status fields are stored as String with documented allowed values from the
+// PRD (e.g. application statuses, payment statuses) to avoid enum churn while
+// keeping data integrity enforced at the application layer.
+// ---------------------------------------------------------------------------
+
+model Programme {
+  id        String   @id @default(cuid())
+  name      String
+  code      String   @unique
+  facultyId String
+  faculty   Faculty  @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+  departmentId String?
+  department   Department? @relation(fields: [departmentId], references: [id])
+  degreeType String // BSc, MSc, PhD, Diploma
+  duration   String // "4 years"
+  studyLevel String @default("Undergraduate") // Undergraduate | Postgraduate
+  entryRequirements String
+  description String
+  careerOpportunities String?
+  tuitionInfo String?
+  isActive  Boolean  @default(true)
+  users     User[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([facultyId, code])
+  @@index([facultyId])
+  @@index([departmentId])
+}
+
+model AcademicSession {
+  id        String   @id @default(cuid())
+  name      String   @unique // e.g. "2024/2025"
+  isCurrent Boolean  @default(false)
+  startDate DateTime
+  endDate   DateTime
+  semesters Semester[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Semester {
+  id        String   @id @default(cuid())
+  name      String   // "First", "Second", "Rain"
+  sessionId String
+  session   AcademicSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  startDate DateTime
+  endDate   DateTime
+  registrationStart DateTime?
+  registrationEnd   DateTime?
+  examStart DateTime?
+  examEnd   DateTime?
+  isCurrent Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([sessionId, name])
+  @@index([sessionId])
+}
+
+model CourseRegistration {
+  id        String   @id @default(cuid())
+  studentId String
+  student   User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  courseId  String // references Course.id (String FK to avoid altering Course model)
+  sessionId String
+  semesterId String
+  type      String   @default("COMPULSORY") // COMPULSORY | ELECTIVE
+  status    String   @default("ACTIVE") // ACTIVE | DROPPED | APPROVED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([studentId, courseId, sessionId, semesterId])
+  @@index([studentId])
+  @@index([sessionId, semesterId])
+}
+
+model Result {
+  id        String   @id @default(cuid())
+  studentId String
+  student   User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  courseId  String
+  sessionId String
+  semesterId String
+  grade     String   // A, B, C, D, E, F
+  gradePoints Float
+  creditUnits Int
+  status    String   @default("DRAFT") // DRAFT | SUBMITTED | APPROVED | PUBLISHED
+  publishedAt DateTime?
+  approvedBy String?
+  approvedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([studentId, courseId, sessionId, semesterId])
+  @@index([studentId])
+  @@index([status])
+}
+
+model Invoice {
+  id        String   @id @default(cuid())
+  studentId String
+  student   User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  sessionId String?
+  semesterId String?
+  amount    Float
+  currency  String   @default("NGN")
+  description String
+  dueDate   DateTime?
+  status    String   @default("UNPAID") // UNPAID | PARTIAL | PAID | CANCELLED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([studentId])
+}
+
+model Receipt {
+  id        String   @id @default(cuid())
+  paymentId String   @unique
+  studentId String
+  student   User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  amount    Float
+  currency  String   @default("NGN")
+  reference String
+  issuedAt  DateTime @default(now())
+
+  @@index([studentId])
+}
+
+model Announcement {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  imageUrl  String?
+  audience  String   @default("GENERAL") // GENERAL | FACULTY | DEPARTMENT | PROGRAMME | STUDENT
+  facultyId String?
+  departmentId String?
+  programmeId String?
+  targetUserId String?
+  publishAt DateTime @default(now())
+  expireAt  DateTime?
+  createdById String
+  createdBy User     @relation("AnnouncementAuthor", fields: [createdById], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([audience])
+}
+
+model News {
+  id        String   @id @default(cuid())
+  title     String
+  slug      String   @unique
+  content   String
+  excerpt   String?
+  imageUrl  String?
+  category  String   @default("General")
+  authorId  String?
+  author    User?    @relation("NewsAuthor", fields: [authorId], references: [id])
+  published Boolean  @default(false)
+  publishedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([published])
+}
+
+model Event {
+  id        String   @id @default(cuid())
+  title     String
+  description String
+  category  String   @default("General")
+  venue     String?
+  startDate DateTime
+  endDate   DateTime?
+  imageUrl  String?
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([published])
+}
+
+model SupportTicket {
+  id        String   @id @default(cuid())
+  ticketId  String   @unique
+  studentId String
+  student   User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  category  String
+  subject   String
+  description String
+  status    String   @default("OPEN") // OPEN | IN_PROGRESS | WAITING_FOR_USER | RESOLVED | CLOSED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([studentId])
+  @@index([status])
+}
+
+model Document {
+  id        String   @id @default(cuid())
+  ownerId   String // student or applicant id
+  ownerType String   @default("STUDENT") // STUDENT | APPLICANT
+  type      String // ADMISSION_LETTER | REGISTRATION_SLIP | RECEIPT | RESULT | FORM
+  filename  String
+  storageKey String  // path outside public web root
+  mimeType  String
+  size      Int
+  accessible Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([ownerId])
+}
+
+model TimetableEntry {
+  id        String   @id @default(cuid())
+  courseId  String
+  courseCode String
+  courseTitle String
+  lecturer  String?
+  day       String // MONDAY..SUNDAY
+  startTime String // HH:mm
+  endTime   String // HH:mm
+  venue     String?
+  sessionId String
+  semesterId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([sessionId, semesterId])
+}
+
+model Exam {
+  id        String   @id @default(cuid())
+  courseId  String
+  courseCode String
+  courseTitle String
+  date      DateTime
+  startTime String
+  endTime   String
+  venue     String?
+  instructions String?
+  sessionId String
+  semesterId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([sessionId, semesterId])
 }
