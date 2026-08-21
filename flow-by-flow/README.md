@@ -64,8 +64,7 @@ Referenced but NOT supplied (still stubbed):
 - `templates/foundation-pack.md` — the shared artifact/contract schemas referenced by `foundation.md`,
   `audit.md`, and `build.md`. Replace the stub with the canonical template when available.
 
-Gate 5 (installation check) status: **FAIL / UNVERIFIED**.
-- `SKILL.md` Gate 5 and `verification.md` Gate 5 require a sibling skill folder `flow-prototype`
-  (same version, reachable for the major UI/UX approval surface). That sibling was **not supplied** in
-  any install package, so the installation cannot be certified complete. Reinstall both skills together
-  when `flow-prototype` is provided.
+Gate 5 (installation check) status: **PASS**.
+- Sibling `flow-prototype` skill (v2.0.1) is now installed at `../flow-prototype/` with its `SKILL.md`
+  and `references/flow-ui.md`. Both skills declare version `2.0.1`, each has every reference its
+  `SKILL.md` names, and `flow-by-flow` can reach `flow-prototype` for the major UI/UX approval surface.
