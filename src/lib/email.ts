@@ -2,8 +2,6 @@
 import { Resend } from 'resend';
 import { env } from "@/env.mjs";
 
-const resend = new Resend(env.RESEND_API_KEY);
-
 interface EmailPayload {
   to: string;
   subject: string;
@@ -20,6 +18,8 @@ export const sendEmail = async (data: EmailPayload) => {
     console.log(`Body: ${data.html}`);
     return { id: 'mock-id' };
   }
+
+  const resend = new Resend(env.RESEND_API_KEY);
 
   try {
     const { data: emailData, error } = await resend.emails.send({
