@@ -60,9 +60,10 @@ Supplied and installed (full content):
 - `references/review.md` (Review gate) — installed this round
 - `references/verification.md` (Verification gates 1-5) — installed this round
 
-Referenced but NOT supplied (still stubbed):
+All references supplied and installed:
 - `templates/foundation-pack.md` — the shared artifact/contract schemas referenced by `foundation.md`,
-  `audit.md`, and `build.md`. Replace the stub with the canonical template when available.
+  `audit.md`, `build.md`, and Gate 1/2/3. Installed with full content. Note: this is a skill-internal
+  template reference; per its own instruction it must NOT be copied into the product.
 
 Gate 5 (installation check) status: **PASS**.
 - Sibling `flow-prototype` skill (v2.0.1) is now installed at `../flow-prototype/` with its `SKILL.md`
