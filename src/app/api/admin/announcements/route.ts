@@ -3,6 +3,7 @@ import { z } from "zod";
 import prisma from "@/lib/prisma";
 import { getServerAuth, unauthorized, forbidden, badRequest } from "@/lib/server-auth";
 import { hasPermission } from "@/lib/rbac";
+import { announcementVisibleTo } from "@/lib/announcements";
 
 const announcementSchema = z.object({
   title: z.string().min(3),
@@ -28,7 +29,15 @@ export async function GET(req: NextRequest) {
     orderBy: { publishAt: "desc" },
     take: 50,
   });
-  return NextResponse.json({ announcements });
+
+  // Server-side audience filtering: a user only sees announcements scoped to them.
+  const me = await prisma.user.findUnique({
+    where: { id: ctx.userId! },
+    select: { id: true, role: true, facultyId: true, departmentId: true, programmeId: true },
+  });
+
+  const visible = announcements.filter((a) => announcementVisibleTo(a, me));
+  return NextResponse.json({ announcements: visible });
 }
 
 export async function POST(req: NextRequest) {

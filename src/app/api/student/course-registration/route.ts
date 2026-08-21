@@ -59,8 +59,8 @@ export async function POST(req: NextRequest) {
     code: c.code,
     creditUnits: c.credits,
     level: c.level ?? undefined,
-    type: (c as any).type ?? "COMPULSORY",
-    prerequisites: (c as any).prerequisites ?? [],
+    type: (c.type as CourseInfo["type"]) ?? "COMPULSORY",
+    prerequisites: c.prerequisites ?? [],
     active: true,
   }));
 
@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
           courseId,
           sessionId,
           semesterId,
-          type: (courses.find((c) => c.id === courseId) as any)?.type ?? "COMPULSORY",
+          type: courses.find((c) => c.id === courseId)?.type ?? "COMPULSORY",
         },
       })
     )

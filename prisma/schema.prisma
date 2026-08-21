@@ -187,7 +187,13 @@ model Course {
   
   facultyId String
   faculty   User     @relation("FacultyCourses", fields: [facultyId], references: [id])
-  
+
+  // Course-registration rule data (PRD §10)
+  type          String   @default("COMPULSORY") // COMPULSORY | ELECTIVE
+  prerequisites String[] @default([])            // course ids that must be passed/selected
+  semesterId    String?
+  sessionId     String?
+
   students  User[]   @relation("Enrollments")
   grades    Grade[]
   
