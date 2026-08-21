@@ -111,7 +111,7 @@ Security pass 1 must name:
 - Trust boundaries and data classification
 - Authentication and authorization matrix by actor and action
 - Tenant and object ownership enforcement
-- Input and file validation
+- Input and other validation
 - Secret storage and log redaction
 - Abuse, rate limits, replay, idempotency, and concurrency
 - Destructive actions and recovery
@@ -134,6 +134,8 @@ A flow passes only if it has:
 - Named entries, exits, and neighboring flows
 
 Split a flow when the primary actor changes, the measurable goal changes, an irreversible handoff occurs, or the segment needs independent release and proof. Keep it together when screens or services are only steps toward the same actor goal. A login step belongs inside the goal it unlocks unless identity itself is the user's measurable goal. Notifications and analytics are shared systems, never standalone user flows.
+
+Do not create frontend, backend, database, notification, or analytics flows. Those are concerns inside actor-goal flows.
 
 ## Phase 5: Deepen each flow
 

@@ -50,7 +50,22 @@ current user instruction > safety and authority > repository constitution > appr
 
 ## Installation status
 
-- Supplied and installed: `SKILL.md`, `orchestration.md`, `foundation.md`, `audit.md`, `build.md`, `delivery.md`.
-- Referenced but NOT supplied (stubbed): `review.md`, `verification.md`, `templates/foundation-pack.md`.
-  Replace stubs with canonical versions when available. Until then, Gate 5 (installation check) is `UNVERIFIED`
-  because the bundle is incomplete.
+Supplied and installed (full content):
+- `SKILL.md` (v2.0.1 manifest)
+- `references/orchestration.md` (compact core)
+- `references/foundation.md` (Foundation workflow)
+- `references/audit.md` (Audit and extension mode)
+- `references/build.md` (Build workflow)
+- `references/delivery.md` (Standard and deeper delivery)
+- `references/review.md` (Review gate) — installed this round
+- `references/verification.md` (Verification gates 1-5) — installed this round
+
+Referenced but NOT supplied (still stubbed):
+- `templates/foundation-pack.md` — the shared artifact/contract schemas referenced by `foundation.md`,
+  `audit.md`, and `build.md`. Replace the stub with the canonical template when available.
+
+Gate 5 (installation check) status: **FAIL / UNVERIFIED**.
+- `SKILL.md` Gate 5 and `verification.md` Gate 5 require a sibling skill folder `flow-prototype`
+  (same version, reachable for the major UI/UX approval surface). That sibling was **not supplied** in
+  any install package, so the installation cannot be certified complete. Reinstall both skills together
+  when `flow-prototype` is provided.
