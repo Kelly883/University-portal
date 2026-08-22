@@ -60,6 +60,8 @@ function checkRateLimit(ip: string, config: RateLimitConfig) {
   return { success: true, limit: config.limit, remaining: config.limit - record.count, reset: record.resetTime };
 }
 
+export const runtime = "nodejs";
+
 export default auth(async (req) => {
   const { nextUrl } = req;
 
